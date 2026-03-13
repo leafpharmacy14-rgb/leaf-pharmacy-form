@@ -28,14 +28,11 @@
     color: #4caf50;
     border-bottom: 2px solid #e8f5e9;
     padding-bottom: 8px;
-    margin-bottom: 12px;}.question { margin-bottom: 16px; }.question label {
+    margin-bottom: 12px;}.question { margin-bottom: 16px; }.question > label {
     display: block;
     font-size: 14px;
     font-weight: bold;
-    margin-bottom: 6px;}.required {
-    color: #e53935;
-    font-size: 12px;
-    margin-left: 4px;}
+    margin-bottom: 6px;}.required { color: #e53935; font-size: 12px; margin-left: 4px; }
   input[type="text"],
   input[type="date"],
   input[type="tel"],
@@ -54,11 +51,34 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    cursor: pointer;}
-  input[type="radio"], input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
 cursor: pointer;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+    }
+    input[type="radio"], input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+    .age-btn-group {
+      display: flex;
+      gap: 10px;
+    }
+    .age-btn {
+      flex: 1;
+      padding: 12px;
+      font-size: 14px;
+      font-weight: bold;
+      border: 2px solid #4caf50;
+      border-radius: 8px;
+      background: white;
+      color: #4caf50;
+      cursor: pointer;
+    }
+    .age-btn.selected {
+      background: #4caf50;
+      color: white;
     }
     .age-badge {
       display: inline-block;
@@ -69,8 +89,7 @@ cursor: pointer;
       border-radius: 20px;
       margin-top: 6px;
     }
-    .section { display: none; }
-    .section.active { display: block; }
+    #section-adult, #section-child { display: none; }
     .submit-btn {
       width: 100%;
       padding: 16px;
@@ -82,20 +101,16 @@ cursor: pointer;
       font-weight: bold;
       cursor: pointer;
       margin-top: 8px;
+      display: none;
     }
-    .submit-btn:active { background: #388e3c; }
-    .note {
-      font-size: 12px;
-      color: #888;
-      margin-top: 4px;
-    }
+    .note { font-size: 12px; color: #888; margin-top: 4px; text-align: center; }
     #complete-msg {
       display: none;
       text-align: center;
       padding: 40px 20px;
     }
     #complete-msg h2 { color: #4caf50; font-size: 22px; margin-bottom: 12px; }
-    #complete-msg p { color: #555; font-size: 14px; line-height: 1.6; }
+    #complete-msg p { color: #555; font-size: 14px; line-height: 1.8; }
   </style>
 </head>
 <body>
@@ -107,7 +122,6 @@ cursor: pointer;
 
 <div id="form-area">
 
-  <!-- 基本情報 -->
   <div class="card">
     <h2>📋 基本情報</h2>
 
@@ -123,11 +137,12 @@ cursor: pointer;
     </div>
 
     <div class="question">
-      <label>年齢区分<span class="required">※必須</span></label>
-      <div class="radio-group">
-        <label><input type="radio" name="age_group" id="radio_adult" value="15歳以上"> 15歳以上</label>
-        <label><input type="radio" name="age_group" id="radio_child" value="0〜14歳"> 0〜14歳（小児）</label>
+<label>年齢区分<span class="required">※必須</span></label>
+      <div class="age-btn-group">
+        <button class="age-btn" id="btn-adult" type="button">15歳以上</button>
+        <button class="age-btn" id="btn-child" type="button">0〜14歳（小児）</button>
       </div>
+      <input type="hidden" id="age_group_val" value="">
     </div>
 
     <div class="question">
@@ -136,9 +151,9 @@ cursor: pointer;
     </div>
   </div>
 
-  <!-- 15歳以上（成人）の質問 -->
-  <div id="section-adult" class="section">
-<div class="card">
+  <!-- 15歳以上 -->
+  <div id="section-adult">
+    <div class="card">
       <h2>💊 現在のお薬・健康状態</h2>
 
       <div class="question">
@@ -171,7 +186,7 @@ cursor: pointer;
       <div class="question">
         <label>Q4. 過去にお薬で副作用が出たことがありますか？<span class="required">※</span></label>
         <div class="radio-group">
-          <label><input type="radio" name="a_sideeffect" value="ない"> ない</label>
+<label><input type="radio" name="a_sideeffect" value="ない"> ない</label>
           <label><input type="radio" name="a_sideeffect" value="ある"> ある</label>
         </div>
         <textarea id="a_sideeffect_detail" placeholder="ある場合：薬の名前・症状をご記入ください" style="margin-top:8px;"></textarea>
@@ -184,7 +199,7 @@ cursor: pointer;
       <div class="question">
         <label>Q5. 現在治療中または既往のある病気はありますか？</label>
         <div class="checkbox-group">
-<label><input type="checkbox" name="a_disease" value="肝臓病"> 肝臓病</label>
+          <label><input type="checkbox" name="a_disease" value="肝臓病"> 肝臓病</label>
           <label><input type="checkbox" name="a_disease" value="腎臓病"> 腎臓病</label>
           <label><input type="checkbox" name="a_disease" value="心臓病"> 心臓病</label>
           <label><input type="checkbox" name="a_disease" value="糖尿病"> 糖尿病</label>
@@ -215,7 +230,7 @@ cursor: pointer;
 
       <div class="question">
         <label>Q8. 飲酒はしていますか？</label>
-        <div class="radio-group">
+<div class="radio-group">
           <label><input type="radio" name="a_alcohol" value="しない"> しない</label>
           <label><input type="radio" name="a_alcohol" value="時々する"> 時々する</label>
           <label><input type="radio" name="a_alcohol" value="毎日する"> 毎日する</label>
@@ -228,7 +243,7 @@ cursor: pointer;
 
       <div class="question">
         <label>Q9. 今回の主な症状・ご相談内容<span class="required">※必須</span></label>
-<textarea id="a_symptom" placeholder="症状や気になることをご記入ください"></textarea>
+        <textarea id="a_symptom" placeholder="症状や気になることをご記入ください"></textarea>
       </div>
 
       <div class="question">
@@ -236,12 +251,10 @@ cursor: pointer;
         <textarea id="a_other" placeholder="ジェネリック希望・一包化希望など"></textarea>
       </div>
     </div>
-
   </div>
 
-  <!-- 0〜14歳（小児）の質問 -->
-  <div id="section-child" class="section">
-
+  <!-- 0〜14歳 -->
+  <div id="section-child">
     <div class="card">
       <h2>👶 お子様の状態</h2>
 
@@ -271,7 +284,7 @@ cursor: pointer;
       <div class="question">
         <label>Q4. 過去にお薬で副作用が出たことがありますか？<span class="required">※</span></label>
         <div class="radio-group">
-          <label><input type="radio" name="c_sideeffect" value="ない"> ない</label>
+<label><input type="radio" name="c_sideeffect" value="ない"> ない</label>
           <label><input type="radio" name="c_sideeffect" value="ある"> ある</label>
         </div>
         <textarea id="c_sideeffect_detail" placeholder="ある場合：薬の名前・症状をご記入ください" style="margin-top:8px;"></textarea>
@@ -280,7 +293,7 @@ cursor: pointer;
       <div class="question">
         <label>Q5. かかりつけの医療機関はありますか？</label>
         <div class="radio-group">
-<label><input type="radio" name="c_clinic" value="ない"> ない</label>
+          <label><input type="radio" name="c_clinic" value="ない"> ない</label>
           <label><input type="radio" name="c_clinic" value="ある"> ある</label>
         </div>
         <input type="text" id="c_clinic_name" placeholder="ある場合：医療機関名をご記入ください" style="margin-top:8px;">
@@ -301,173 +314,158 @@ cursor: pointer;
         <textarea id="c_other" placeholder="ご自由にお書きください"></textarea>
       </div>
     </div>
-
   </div>
 
-  <!-- 送信ボタン -->
-  <div id="submit-area" style="display:none; margin-bottom:24px;">
-    <button class="submit-btn" id="submit-btn">送信する</button>
-    <p class="note" style="text-align:center; margin-top:8px;">送信後、LINEにメッセージが届きます</p>
-  </div>
+  <button class="submit-btn" id="submit-btn" type="button">送信する</button>
+  <p class="note" id="submit-note" style="display:none;">送信後、LINEにメッセージが届きます</p>
 
 </div>
 
-<!-- 送信完了 -->
 <div id="complete-msg">
   <h2>✅ 送信完了</h2>
   <p>問診票を受け付けました。<br>LINEにも送信内容が届きます。<br><br>そのままお待ちください。</p>
 </div>
 
 <script>
-  const LIFF_ID = "2009439411-BathCPyi";
-  const API_URL = "https://script.google.com/macros/s/AKfycbzthokXvdsVI7QVkB96GmP1lK2u_qNqaOqb4_QrpUIpBl0k3qEcw906oXrqFU4czGnk/exec";
+var LIFF_ID = "2009439411-BathCPyi";
+var API_URL = "https://script.google.com/macros/s/AKfycbzthokXvdsVI7QVkB96GmP1lK2u_qNqaOqb4_QrpUIpBl0k3qEcw906oXrqFU4czGnk/exec";
 
-  function initLiff() {
-    liff.init({ liffId: LIFF_ID }).catch(function(e) {
-      console.warn("LIFF初期化エラー:", e);
-    });
-  }
-
-  function switchAgeGroup(group) {
-    var adultSec = document.getElementById("section-adult");
-    var childSec = document.getElementById("section-child");
-    var submitArea = document.getElementById("submit-area");
-    if (group === "adult") {
-      adultSec.classList.add("active");
-      childSec.classList.remove("active");
-    } else {
-      childSec.classList.add("active");
-      adultSec.classList.remove("active");
-    }
-    submitArea.style.display = "block";
-  }
+function switchAgeGroup(group) {
+  var adultSec = document.getElementById("section-adult");
+  var childSec = document.getElementById("section-child");
+  var submitBtn = document.getElementById("submit-btn");
+  var submitNote = document.getElementById("submit-note");
 Google Drive: Sign-in
 Access Google Drive with a Google account (for personal use) or Google Workspace account (for business use).
+var btnAdult = document.getElementById("btn-adult");
+  var btnChild = document.getElementById("btn-child");
+  var ageVal = document.getElementById("age_group_val");
+
+  if (group === "adult") {
+    adultSec.style.display = "block";
+    childSec.style.display = "none";
+    btnAdult.className = "age-btn selected";
+    btnChild.className = "age-btn";
+    ageVal.value = "15歳以上";
+  } else {
+    adultSec.style.display = "none";
+    childSec.style.display = "block";
+    btnAdult.className = "age-btn";
+    btnChild.className = "age-btn selected";
+    ageVal.value = "0〜14歳";
+  }
+  submitBtn.style.display = "block";
+  submitNote.style.display = "block";
+}
+
 function checkAge() {
-    var val = document.getElementById("birthday").value;
-    if (!val) return;
-    var parts = val.split("-");
-    var birth = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
-    var today = new Date();
-    var age = today.getFullYear() - birth.getFullYear();
-    var m = today.getMonth() - birth.getMonth();
-    if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) { age--; }
+  var val = document.getElementById("birthday").value;
+  if (!val) return;
+  var parts = val.split("-");
+  var birth = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+  var today = new Date();
+  var age = today.getFullYear() - birth.getFullYear();
+  var m = today.getMonth() - birth.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) { age--; }
+  document.getElementById("age-display").innerHTML = '<span class="age-badge">年齢：' + age + '歳</span>';
+  if (age < 15) {
+    switchAgeGroup("child");
+  } else {
+    switchAgeGroup("adult");
+  }
+}
 
-    var display = document.getElementById("age-display");
-    display.innerHTML = '<span class="age-badge">年齢：' + age + '歳</span>';
+function getChecked(name) {
+  var els = document.querySelectorAll('input[name="' + name + '"]:checked');
+  var vals = [];
+  for (var i = 0; i < els.length; i++) { vals.push(els[i].value); }
+  return vals.join("、");
+}
 
-    if (age < 15) {
-      document.getElementById("radio_child").checked = true;
-      switchAgeGroup("child");
-    } else {
-      document.getElementById("radio_adult").checked = true;
-      switchAgeGroup("adult");
-    }
+function submitForm() {
+  var name = document.getElementById("name").value.trim();
+  var birthday = document.getElementById("birthday").value;
+  var ageGroup = document.getElementById("age_group_val").value;
+
+  if (!name) { alert("お名前を入力してください。"); return; }
+  if (!birthday) { alert("生年月日を入力してください。"); return; }
+  if (!ageGroup) { alert("年齢区分を選択してください。"); return; }
+
+  var data = {
+    name: name,
+    birthday: birthday,
+    age_group: ageGroup,
+    phone: document.getElementById("phone").value
+  };
+if (ageGroup === "15歳以上") {
+    data.current_med     = getChecked("a_current_med");
+    data.current_med_det = document.getElementById("a_current_med_detail").value;
+    data.otc             = getChecked("a_otc");
+    data.otc_det         = document.getElementById("a_otc_detail").value;
+    data.allergy         = getChecked("a_allergy");
+    data.allergy_det     = document.getElementById("a_allergy_detail").value;
+    data.sideeffect      = getChecked("a_sideeffect");
+    data.sideeffect_det  = document.getElementById("a_sideeffect_detail").value;
+    data.disease         = getChecked("a_disease");
+    data.disease_other   = document.getElementById("a_disease_other").value;
+    data.pregnancy       = getChecked("a_pregnancy");
+    data.smoke           = getChecked("a_smoke");
+    data.alcohol         = getChecked("a_alcohol");
+    data.symptom         = document.getElementById("a_symptom").value;
+    data.other           = document.getElementById("a_other").value;
+  } else {
+    data.weight          = document.getElementById("c_weight").value;
+    data.current_med     = getChecked("c_current_med");
+    data.current_med_det = document.getElementById("c_current_med_detail").value;
+    data.allergy         = getChecked("c_allergy");
+    data.allergy_det     = document.getElementById("c_allergy_detail").value;
+    data.sideeffect      = getChecked("c_sideeffect");
+    data.sideeffect_det  = document.getElementById("c_sideeffect_detail").value;
+    data.clinic          = getChecked("c_clinic");
+    data.clinic_name     = document.getElementById("c_clinic_name").value;
+    data.symptom         = document.getElementById("c_symptom").value;
+    data.guardian        = document.getElementById("c_guardian").value;
+    data.other           = document.getElementById("c_other").value;
   }
 
-  function getChecked(name) {
-    var els = document.querySelectorAll('input[name="' + name + '"]:checked');
-    var vals = [];
-    els.forEach(function(el) { vals.push(el.value); });
-    return vals.join("、");
-  }
-
-  function submitForm() {
-    var name = document.getElementById("name").value.trim();
-    var birthday = document.getElementById("birthday").value;
-    var ageGroup = getChecked("age_group");
-
-    if (!name) { alert("お名前を入力してください。"); return; }
-    if (!birthday) { alert("生年月日を入力してください。"); return; }
-    if (!ageGroup) { alert("年齢区分を選択してください。"); return; }
-
-    var data = {
-      name: name,
-      birthday: birthday,
-      age_group: ageGroup,
-      phone: document.getElementById("phone").value
-    };
-
-    if (ageGroup === "15歳以上") {
-      data.current_med      = getChecked("a_current_med");
-      data.current_med_det  = document.getElementById("a_current_med_detail").value;
-      data.otc              = getChecked("a_otc");
-      data.otc_det          = document.getElementById("a_otc_detail").value;
-      data.allergy          = getChecked("a_allergy");
-      data.allergy_det      = document.getElementById("a_allergy_detail").value;
-data.sideeffect       = getChecked("a_sideeffect");
-      data.sideeffect_det   = document.getElementById("a_sideeffect_detail").value;
-      data.disease          = getChecked("a_disease");
-      data.disease_other    = document.getElementById("a_disease_other").value;
-      data.pregnancy        = getChecked("a_pregnancy");
-      data.smoke            = getChecked("a_smoke");
-      data.alcohol          = getChecked("a_alcohol");
-      data.symptom          = document.getElementById("a_symptom").value;
-      data.other            = document.getElementById("a_other").value;
-    } else {
-      data.weight           = document.getElementById("c_weight").value;
-      data.current_med      = getChecked("c_current_med");
-      data.current_med_det  = document.getElementById("c_current_med_detail").value;
-      data.allergy          = getChecked("c_allergy");
-      data.allergy_det      = document.getElementById("c_allergy_detail").value;
-      data.sideeffect       = getChecked("c_sideeffect");
-      data.sideeffect_det   = document.getElementById("c_sideeffect_detail").value;
-      data.clinic           = getChecked("c_clinic");
-      data.clinic_name      = document.getElementById("c_clinic_name").value;
-      data.symptom          = document.getElementById("c_symptom").value;
-      data.guardian         = document.getElementById("c_guardian").value;
-      data.other            = document.getElementById("c_other").value;
-    }
-
-    // スプレッドシートへ送信
-    try {
-      fetch(API_URL, {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
-      });
-    } catch(e) {
-      console.warn("スプレッドシート送信エラー:", e);
-    }
-
-    // LINEへ自動送信
-    var msg = "【リーフ薬局 問診票】\n";
-    msg += "お名前：" + data.name + "\n";
-    msg += "生年月日：" + data.birthday + "\n";
-    msg += "区分：" + data.age_group + "\n";
-    if (data.phone) msg += "電話：" + data.phone + "\n";
-    msg += "症状：" + (data.symptom || "未記入") + "\n";
-msg += "アレルギー：" + (data.allergy  "なし") + "\n";
-    msg += "服用中の薬：" + (data.current_med 
- "なし");
-
-    try {
-      if (liff.isInClient()) {
-        liff.sendMessages([{ type: "text", text: msg }]).catch(function(e) {
-          console.warn("LINE送信エラー:", e);
-        });
-      }
-    } catch(e) {
-      console.warn("LIFF送信エラー:", e);
-    }
-
-    // 完了画面
-    document.getElementById("form-area").style.display = "none";
-    document.getElementById("complete-msg").style.display = "block";
-  }
-
-  document.addEventListener("DOMContentLoaded", function() {
-    document.getElementById("radio_adult").addEventListener("change", function() {
-      switchAgeGroup("adult");
+  try {
+    fetch(API_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
     });
-    document.getElementById("radio_child").addEventListener("change", function() {
-      switchAgeGroup("child");
-    });
-    document.getElementById("birthday").addEventListener("change", checkAge);
-    document.getElementById("submit-btn").addEventListener("click", submitForm);
-    initLiff();
-  });
+  } catch(e) {}
+var msg = "【リーフ薬局 問診票】\n";
+  msg += "お名前：" + data.name + "\n";
+  msg += "生年月日：" + data.birthday + "\n";
+  msg += "区分：" + data.age_group + "\n";
+  if (data.phone) msg += "電話：" + data.phone + "\n";
+  msg += "症状：" + (data.symptom  "未記入") + "\n";
+  msg += "アレルギー：" + (data.allergy 
+ "なし") + "\n";
+  msg += "服用中の薬：" + (data.current_med || "なし");
+
+  try {
+    if (liff.isInClient()) {
+      liff.sendMessages([{ type: "text", text: msg }]);
+    }
+  } catch(e) {}
+
+  document.getElementById("form-area").style.display = "none";
+  document.getElementById("complete-msg").style.display = "block";
+}
+
+// イベント登録（DOMContentLoaded不使用・直接プロパティ代入）
+document.getElementById("btn-adult").onclick = function() { switchAgeGroup("adult"); };
+document.getElementById("btn-child").onclick = function() { switchAgeGroup("child"); };
+document.getElementById("birthday").onchange = checkAge;
+document.getElementById("submit-btn").onclick = submitForm;
+
+// LIFF初期化
+try {
+  liff.init({ liffId: LIFF_ID });
+} catch(e) {}
 </script>
 
 </body>
