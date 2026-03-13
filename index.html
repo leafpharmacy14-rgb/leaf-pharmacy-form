@@ -8,19 +8,25 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:"Hiragino Kaku Gothic ProN","Meiryo",sans-serif;background:#f0f8f0;color:#333;padding:16px}
-.header{background:#4caf50;color:#fff;text-align:center;padding:16px;border-radius:12px;margin-bottom:20px}
-.header h1{font-size:20px;margin-bottom:4px}
-.header p{font-size:13px;opacity:.9}
-.card{background:#fff;border-radius:12px;padding:16px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
-.card h2{font-size:15px;color:#4caf50;border-bottom:2px solid #e8f5e9;padding-bottom:8px;margin-bottom:12px}
+.hd{background:#4caf50;color:#fff;text-align:center;padding:16px;border-radius:12px;margin-bottom:20px}
+.hd h1{font-size:20px;margin-bottom:4px}
+.hd p{font-size:13px;opacity:.9}
+.cd{background:#fff;border-radius:12px;padding:16px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.cd h2{font-size:15px;color:#4caf50;border-bottom:2px solid #e8f5e9;padding-bottom:8px;margin-bottom:12px}
+.sttl{background:#e8f5e9;color:#2e7d32;font-size:14px;font-weight:bold;padding:10px 14px;border-radius:8px;margin-bottom:12px}
 .q{margin-bottom:16px}
 .q>label{display:block;font-size:14px;font-weight:bold;margin-bottom:6px}
 .req{color:#e53935;font-size:12px;margin-left:4px}
-input[type=text],input[type=date],input[type=tel],textarea{width:100%;padding:10px;border:1px solid #ccc;border-radius:8px;font-size:14px}
-textarea{height:80px;resize:vertical}
-.rg,.cg{display:flex;flex-direction:column;gap:8px}
+.note{background:#fff8e1;border-left:4px solid #ffc107;padding:12px;border-radius:4px;font-size:12px;line-height:1.7;margin-bottom:8px}
+input[type=text],input[type=date],input[type=tel],textarea{width:100%;padding:10px;border:1px solid #ccc;border-radius:8px;font-size:14px;margin-top:4px}
+textarea{height:72px;resize:vertical}
+.rg,.cg{display:flex;flex-direction:column;gap:8px;margin-top:6px}
 .rg label,.cg label{font-weight:normal;display:flex;align-items:center;gap:8px;cursor:pointer;padding:8px;border:1px solid #ddd;border-radius:8px}
-input[type=radio],input[type=checkbox]{width:18px;height:18px}
+input[type=radio],input[type=checkbox]{width:18px;height:18px;flex-shrink:0}
+.sub{display:none;margin-top:8px;padding:10px;background:#f9f9f9;border-radius:8px}
+.zrow{display:flex;gap:8px;align-items:flex-start;margin-top:4px}
+.zrow input{flex:1;margin-top:0}
+.zbtn{padding:10px 14px;background:#4caf50;color:#fff;border:none;border-radius:8px;font-size:14px;cursor:pointer;white-space:nowrap}
 #sec-adult,#sec-child{display:none}
 .sb{width:100%;padding:16px;background:#4caf50;color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:bold;cursor:pointer;margin-bottom:32px;display:none}
 #cm{display:none;text-align:center;padding:40px 20px}
@@ -30,110 +36,309 @@ input[type=radio],input[type=checkbox]{width:18px;height:18px}
 </head>
 <body>
 <div id="fa">
+<div class="hd"><h1>🌿 リーフ薬局</h1><p>問診票</p></div>
 
-<div class="header">
-<h1>🌿 リーフ薬局</h1>
-<p>問診票</p>
-</div>
-
-<div class="card">
+<div class="cd">
 <h2>📋 基本情報</h2>
-<div class="q">
-<label>お名前（フルネーム）<span class="req">※必須</span></label>
-<input type="text" id="nm" placeholder="例：田中　太郎">
-</div>
-<div class="q">
-<label>生年月日<span class="req">※必須</span></label>
-<input type="date" id="bd">
-<div id="ad" style="margin-top:6px"></div>
-</div>
-<div class="q">
-<label>年齢区分<span class="req">※必須</span></label>
+<div class="q"><label>お名前（フルネーム）<span class="req">※必須</span></label><input type="text" id="nm" placeholder="例：田中　太郎"></div>
+<div class="q"><label>フリガナ<span class="req">※必須</span></label><input type="text" id="fr" placeholder="例：タナカ　タロウ"></div>
+<div class="q"><label>生年月日<span class="req">※必須</span></label><input type="date" id="bd"><div id="ad" style="margin-top:6px"></div></div>
+<div class="q"><label>年齢区分<span class="req">※必須</span></label>
 <div class="rg">
 <label><input type="radio" name="ag" id="ag-a" value="15歳以上"> 15歳以上</label>
 <label><input type="radio" name="ag" id="ag-c" value="0〜14歳"> 0〜14歳（小児）</label>
-</div>
-</div>
-<div class="q">
-<label>電話番号</label>
-<input type="tel" id="ph" placeholder="例：090-1234-5678">
-</div>
+</div></div>
+<div class="q"><label>固定電話番号</label><input type="tel" id="ph" placeholder="例：03-1234-5678"></div>
+<div class="q"><label>携帯電話番号</label><input type="tel" id="pm" placeholder="例：090-1234-5678"></div>
+<div class="q"><label>郵便番号</label>
+<div class="zrow"><input type="text" id="zp" placeholder="例：1234567（ハイフンなし）"><button class="zbtn" id="zbtn" type="button">住所を検索</button></div></div>
+<div class="q"><label>ご住所</label><input type="text" id="addr" placeholder="郵便番号検索後に自動入力されます"></div>
+<div class="q"><label>ジェネリック医薬品について<span class="req">※必須</span></label>
+<div class="note">2024年10月より医療上の必要がない場合、原則ジェネリック医薬品でのお渡しとなります。先発品ご希望の際は以下をお読みください。<br><br>【後発医薬品のある先発医薬品（長期収載品）の選定療養について】<br>国の制度により、2024年10月から後発医薬品があるお薬で先発医薬品の処方を希望される場合は特別の料金をお支払いいただきます。先発医薬品と後発医薬品の価格差の４分の１相当（2026年6月より２分の１）の料金となります。<br><br>例：先発品1錠100円・後発品1錠60円の場合、差額40円の4分の1の10円（6月以降20円）を通常の患者負担とは別にお支払いいただきます。</div>
+<div class="rg">
+<label><input type="radio" name="gen" value="どちらでもよい"> どちらでもよい</label>
+<label><input type="radio" name="gen" value="先発品を希望"> 先発品を希望</label>
+</div></div>
 </div>
 
+<!-- 15歳以上 -->
 <div id="sec-adult">
-<div class="card">
-<h2>💊 現在のお薬・健康状態</h2>
-<div class="q"><label>Q1. 処方されているお薬はありますか？<span class="req">※</span></label>
-<div class="rg"><label><input type="radio" name="acm" value="ない"> ない</label><label><input type="radio" name="acm" value="ある"> ある</label></div>
-<textarea id="acmd" placeholder="ある場合：薬の名前・理由" style="margin-top:8px"></textarea></div>
-<div class="q"><label>Q2. 市販薬・サプリを服用していますか？</label>
-<div class="rg"><label><input type="radio" name="ao" value="いいえ"> いいえ</label><label><input type="radio" name="ao" value="はい"> はい</label></div>
-<textarea id="aod" placeholder="はいの場合：内容" style="margin-top:8px"></textarea></div>
-<div class="q"><label>Q3. アレルギーはありますか？<span class="req">※</span></label>
-<div class="rg"><label><input type="radio" name="aa" value="ない"> ない</label><label><input type="radio" name="aa" value="ある"> ある</label></div>
-<textarea id="aad" placeholder="ある場合：内容" style="margin-top:8px"></textarea></div>
-<div class="q"><label>Q4. 薬の副作用歴はありますか？<span class="req">※</span></label>
-<div class="rg"><label><input type="radio" name="ase" value="ない"> ない</label><label><input type="radio" name="ase" value="ある"> ある</label></div>
-<textarea id="ased" placeholder="ある場合：薬の名前・症状" style="margin-top:8px"></textarea></div>
+<div class="cd">
+<div class="sttl">▼ 15歳以上の方へ</div>
+<div class="q"><label>Q1. 本日受診以外にかかっている病院はありますか？</label>
+<div class="rg">
+<label><input type="radio" name="a_hosp" value="ない"> ない</label>
+<label><input type="radio" name="a_hosp" value="ある"> ある</label>
 </div>
-<div class="card">
-<h2>🏥 既往歴・生活習慣</h2>
-<div class="q"><label>Q5. 治療中または既往のある病気はありますか？</label>
+<div class="sub" id="a_hosp_sub"><input type="text" id="a_hosp_nm" placeholder="医療機関名をご入力ください"></div>
+</div>
+<div class="q"><label>Q2. 現在使用している医薬品・市販薬・サプリメントはありますか？</label>
+<div class="rg">
+<label><input type="radio" name="a_meds" value="ない"> ない</label>
+<label><input type="radio" name="a_meds" value="ある（お薬手帳に記載あり）"> ある（お薬手帳に記載あり）</label>
+<label><input type="radio" name="a_meds" value="ある（手帳忘れ・未記載品）"> ある（手帳忘れ・未記載品）</label>
+</div>
+<div class="sub" id="a_meds_sub"><input type="text" id="a_meds_nm" placeholder="商品名をご入力ください"></div>
+</div>
+<div class="q"><label>Q3. 今までにかかったことのある病気・現在治療中の疾患はありますか？（複数選択可）</label>
+<div class="rg"><label><input type="radio" name="a_hist_r" value="ない"> ない</label></div>
 <div class="cg">
-<label><input type="checkbox" name="adi" value="肝臓病"> 肝臓病</label>
-<label><input type="checkbox" name="adi" value="腎臓病"> 腎臓病</label>
-<label><input type="checkbox" name="adi" value="心臓病"> 心臓病</label>
-<label><input type="checkbox" name="adi" value="糖尿病"> 糖尿病</label>
-<label><input type="checkbox" name="adi" value="高血圧"> 高血圧</label>
-<label><input type="checkbox" name="adi" value="緑内障"> 緑内障</label>
-<label><input type="checkbox" name="adi" value="その他"> その他</label>
+<label><input type="checkbox" name="a_hist" value="高血圧"> 高血圧</label>
+<label><input type="checkbox" name="a_hist" value="高脂血症"> 高脂血症（脂質異常症）</label>
+<label><input type="checkbox" name="a_hist" value="糖尿病"> 糖尿病</label>
+<label><input type="checkbox" name="a_hist" value="緑内障"> 緑内障</label>
+<label><input type="checkbox" name="a_hist" value="肝臓の病気"> 肝臓の病気</label>
+<label><input type="checkbox" name="a_hist" value="腎臓の病気"> 腎臓の病気</label>
+<label><input type="checkbox" name="a_hist" value="透析"> 透析</label>
+<label><input type="checkbox" name="a_hist" value="胃潰瘍"> 胃潰瘍</label>
+<label><input type="checkbox" name="a_hist" value="十二指腸潰瘍"> 十二指腸潰瘍</label>
+<label><input type="checkbox" name="a_hist" value="前立腺肥大症"> 前立腺肥大症</label>
+<label><input type="checkbox" name="a_hist" value="不整脈"> 不整脈</label>
+<label><input type="checkbox" name="a_hist" value="心筋梗塞"> 心筋梗塞</label>
+<label><input type="checkbox" name="a_hist" value="狭心症"> 狭心症</label>
+<label><input type="checkbox" name="a_hist" value="心不全"> 心不全</label>
+<label><input type="checkbox" name="a_hist" value="気管支ぜんそく"> 気管支ぜんそく</label>
+<label><input type="checkbox" name="a_hist" value="アトピー性皮膚炎"> アトピー性皮膚炎</label>
+<label><input type="checkbox" name="a_hist" value="脳梗塞"> 脳梗塞</label>
+<label><input type="checkbox" name="a_hist" value="痛風"> 痛風（高尿酸血症）</label>
+<label><input type="checkbox" name="a_hist" value="骨粗しょう症"> 骨粗しょう症</label>
+<label><input type="checkbox" name="a_hist" value="精神疾患"> 精神疾患</label>
+<label><input type="checkbox" name="a_hist" value="てんかん"> てんかん</label>
+<label><input type="checkbox" name="a_hist" value="貧血"> 貧血</label>
 </div>
-<input type="text" id="ado" placeholder="その他の場合はご記入ください" style="margin-top:8px"></div>
-<div class="q"><label>Q6. 妊娠・授乳中ですか？</label>
-<div class="rg"><label><input type="radio" name="ap" value="いいえ"> いいえ</label><label><input type="radio" name="ap" value="妊娠中"> 妊娠中</label><label><input type="radio" name="ap" value="授乳中"> 授乳中</label></div></div>
-<div class="q"><label>Q7. 喫煙はしますか？</label>
-<div class="rg"><label><input type="radio" name="ask" value="しない"> しない</label><label><input type="radio" name="ask" value="する"> する</label><label><input type="radio" name="ask" value="過去にしていた"> 過去にしていた</label></div></div>
-<div class="q"><label>Q8. 飲酒はしますか？</label>
-<div class="rg"><label><input type="radio" name="aal" value="しない"> しない</label><label><input type="radio" name="aal" value="時々する"> 時々する</label><label><input type="radio" name="aal" value="毎日する"> 毎日する</label></div></div>
+<textarea id="a_hist_oth" placeholder="その他・詳細をご記入ください"></textarea>
 </div>
-<div class="card">
-<h2>📝 相談内容</h2>
-<div class="q"><label>Q9. 今回の主な症状・相談内容<span class="req">※必須</span></label>
-<textarea id="asy" placeholder="症状や気になることをご記入ください"></textarea></div>
-<div class="q"><label>Q10. ご希望・その他</label>
-<textarea id="aot" placeholder="ジェネリック希望・一包化希望など"></textarea></div>
+<div class="q"><label>Q4. お薬の使用で副作用が出たことはありますか？</label>
+<div class="rg">
+<label><input type="radio" name="a_se" value="ない"> ない</label>
+<label><input type="radio" name="a_se" value="ある"> ある</label>
+</div>
+<div class="sub" id="a_se_sub"><textarea id="a_se_det" placeholder="薬品名・発症時期・症状をご記入ください"></textarea></div>
+</div>
+<div class="q"><label>Q5. 気になる体質はありますか？（複数選択可）</label>
+<div class="rg"><label><input type="radio" name="a_con_r" value="ない"> ない</label></div>
+<div class="cg">
+<label><input type="checkbox" name="a_con" value="便秘しやすい"> 便秘しやすい</label>
+<label><input type="checkbox" name="a_con" value="下痢しやすい"> 下痢しやすい</label>
+<label><input type="checkbox" name="a_con" value="眠れない"> 眠れない</label>
+<label><input type="checkbox" name="a_con" value="胃が弱い"> 胃が弱い</label>
+<label><input type="checkbox" name="a_con" value="かぶれやすい"> かぶれやすい</label>
+<label><input type="checkbox" name="a_con" value="肌が弱い"> 肌が弱い</label>
+<label><input type="checkbox" name="a_con" value="冷え性"> 冷え性</label>
+<label><input type="checkbox" name="a_con" value="頭痛がよくする"> 頭痛がよくする</label>
+</div>
+<input type="text" id="a_con_oth" placeholder="その他があればご記入ください">
+</div>
+<div class="q"><label>Q6. アレルギーはありますか？（複数選択可）</label>
+<div class="rg"><label><input type="radio" name="a_alg_r" value="ない"> ない</label></div>
+<div class="cg">
+<label><input type="checkbox" name="a_alg" value="小麦"> 小麦</label>
+<label><input type="checkbox" name="a_alg" value="卵"> 卵</label>
+<label><input type="checkbox" name="a_alg" value="そば"> そば</label>
+<label><input type="checkbox" name="a_alg" value="牛乳"> 牛乳</label>
+<label><input type="checkbox" name="a_alg" value="その他乳製品"> その他乳製品</label>
+<label><input type="checkbox" name="a_alg" value="ピーナッツ"> ピーナッツ</label>
+<label><input type="checkbox" name="a_alg" value="くるみ"> くるみ</label>
+<label><input type="checkbox" name="a_alg" value="甲殻類"> 甲殻類</label>
+<label><input type="checkbox" name="a_alg" value="魚介類"> 魚介類</label>
+<label><input type="checkbox" name="a_alg" value="花粉"> 花粉</label>
+<label><input type="checkbox" name="a_alg" value="ダニ"> ダニ</label>
+<label><input type="checkbox" name="a_alg" value="ハウスダスト"> ハウスダスト</label>
+<label><input type="checkbox" name="a_alg" value="動物"> 動物</label>
+<label><input type="checkbox" name="a_alg" value="アルコール"> アルコール</label>
+</div>
+<input type="text" id="a_alg_oth" placeholder="その他・詳細があればご記入ください">
+</div>
+<div class="q"><label>Q7. よく口にする飲食物はありますか？（複数選択可）</label>
+<div class="rg"><label><input type="radio" name="a_food_r" value="ない"> ない</label></div>
+<div class="cg">
+<label><input type="checkbox" name="a_food" value="牛乳"> 牛乳</label>
+<label><input type="checkbox" name="a_food" value="乳製品"> 乳製品</label>
+<label><input type="checkbox" name="a_food" value="納豆"> 納豆</label>
+<label><input type="checkbox" name="a_food" value="コーヒー"> コーヒー</label>
+<label><input type="checkbox" name="a_food" value="グレープフルーツ"> グレープフルーツ（ジュース含む）</label>
+<label><input type="checkbox" name="a_food" value="青汁"> 青汁</label>
+</div>
+<input type="text" id="a_food_oth" placeholder="その他があればご記入ください">
+</div>
+<div class="q"><label>Q8. タバコは吸いますか？</label>
+<div class="rg">
+<label><input type="radio" name="a_smk" value="吸わない"> 吸わない</label>
+<label><input type="radio" name="a_smk" value="吸う"> 吸う</label>
+</div>
+<div class="sub" id="a_smk_sub"><input type="text" id="a_smk_cnt" placeholder="1日の本数をご記入ください"></div>
+</div>
+<div class="q"><label>Q9. お酒は飲みますか？</label>
+<div class="rg">
+<label><input type="radio" name="a_drk" value="飲まない"> 飲まない</label>
+<label><input type="radio" name="a_drk" value="飲む"> 飲む</label>
+</div>
+<div class="sub" id="a_drk_sub"><input type="text" id="a_drk_days" placeholder="週何日飲酒するかご記入ください"></div>
+</div>
+<div class="q"><label>Q10. 1日のお食事の回数は？</label>
+<div class="rg">
+<label><input type="radio" name="a_meal" value="1日3回"> 1日3回</label>
+<label><input type="radio" name="a_meal" value="1日2回"> 1日2回</label>
+<label><input type="radio" name="a_meal" value="1日1回"> 1日1回</label>
+<label><input type="radio" name="a_meal" value="1日4回以上"> 1日4回以上</label>
+<label><input type="radio" name="a_meal" value="その他"> その他</label>
+</div>
+<input type="text" id="a_meal_oth" placeholder="その他の場合はご記入ください">
+</div>
+<div class="q"><label>Q11. 乗り物の運転はしますか？</label>
+<div class="rg">
+<label><input type="radio" name="a_drv" value="運転しない"> 運転しない</label>
+<label><input type="radio" name="a_drv" value="運転する（時々）"> 運転する（時々）</label>
+<label><input type="radio" name="a_drv" value="運転する（毎日）"> 運転する（毎日）</label>
+<label><input type="radio" name="a_drv" value="運転する（運転の仕事）"> 運転する（運転の仕事）</label>
+<label><input type="radio" name="a_drv" value="その他"> その他</label>
+</div>
+<input type="text" id="a_drv_oth" placeholder="その他の場合はご記入ください">
+</div>
+<div class="q"><label>Q12. 危険な作業はしますか？</label>
+<div class="rg">
+<label><input type="radio" name="a_dng" value="しない"> しない</label>
+<label><input type="radio" name="a_dng" value="高所作業"> 高所作業</label>
+<label><input type="radio" name="a_dng" value="危険を伴う機械作業"> 危険を伴う機械作業</label>
+<label><input type="radio" name="a_dng" value="その他"> その他</label>
+</div>
+<input type="text" id="a_dng_oth" placeholder="その他の場合はご記入ください">
+</div>
+<div class="q"><label>Q13. 服用できない・苦手なタイプのお薬はありますか？（複数選択可）</label>
+<div class="rg"><label><input type="radio" name="a_mf_r" value="ない"> ない</label></div>
+<div class="cg">
+<label><input type="checkbox" name="a_mf" value="錠剤"> 錠剤</label>
+<label><input type="checkbox" name="a_mf" value="カプセル"> カプセル</label>
+<label><input type="checkbox" name="a_mf" value="粉"> 粉</label>
+<label><input type="checkbox" name="a_mf" value="シロップ"> シロップ</label>
+</div>
+<input type="text" id="a_mf_oth" placeholder="その他があればご記入ください">
+</div>
+<div class="q"><label>Q14. 女性の方にうかがいます（妊娠・授乳について）（複数選択可）</label>
+<div class="rg"><label><input type="radio" name="a_fem_r" value="特になし"> 特になし（男性の方もこちら）</label></div>
+<div class="cg">
+<label><input type="checkbox" name="a_fem" value="妊娠の可能性がある"> 妊娠の可能性がある</label>
+<label><input type="checkbox" id="a_preg_chk" name="a_fem" value="妊娠中"> 妊娠中</label>
+<label><input type="checkbox" name="a_fem" value="授乳中"> 授乳中</label>
+</div>
+<div class="sub" id="a_preg_sub"><input type="text" id="a_preg_wk" placeholder="現在の週数をご記入ください"></div>
+<input type="text" id="a_fem_oth" placeholder="その他があればご記入ください">
+</div>
 </div>
 </div>
 
+<!-- 0〜14歳 -->
 <div id="sec-child">
-<div class="card">
-<h2>👶 お子様の状態</h2>
+<div class="cd">
+<div class="sttl">▼ 0〜14歳（小児）の方へ</div>
 <div class="q"><label>Q1. お子様の体重（kg）</label><input type="text" id="cw" placeholder="例：20"></div>
-<div class="q"><label>Q2. 処方されているお薬はありますか？<span class="req">※</span></label>
-<div class="rg"><label><input type="radio" name="ccm" value="ない"> ない</label><label><input type="radio" name="ccm" value="ある"> ある</label></div>
-<textarea id="ccmd" placeholder="ある場合：薬の名前・理由" style="margin-top:8px"></textarea></div>
-<div class="q"><label>Q3. アレルギーはありますか？<span class="req">※</span></label>
-<div class="rg"><label><input type="radio" name="ca" value="ない"> ない</label><label><input type="radio" name="ca" value="ある"> ある</label></div>
-<textarea id="cad" placeholder="ある場合：内容" style="margin-top:8px"></textarea></div>
-<div class="q"><label>Q4. 薬の副作用歴はありますか？<span class="req">※</span></label>
-<div class="rg"><label><input type="radio" name="cse" value="ない"> ない</label><label><input type="radio" name="cse" value="ある"> ある</label></div>
-<textarea id="csed" placeholder="ある場合：薬の名前・症状" style="margin-top:8px"></textarea></div>
-<div class="q"><label>Q5. かかりつけ医はありますか？</label>
-<div class="rg"><label><input type="radio" name="cc" value="ない"> ない</label><label><input type="radio" name="cc" value="ある"> ある</label></div>
-<input type="text" id="ccn" placeholder="ある場合：医療機関名" style="margin-top:8px"></div>
-<div class="q"><label>Q6. 今回の症状<span class="req">※必須</span></label><textarea id="csy" placeholder="症状をご記入ください"></textarea></div>
-<div class="q"><label>Q7. 保護者のお名前<span class="req">※必須</span></label><input type="text" id="cg" placeholder="例：田中　花子"></div>
-<div class="q"><label>Q8. ご希望・その他</label><textarea id="cot" placeholder="ご自由にお書きください"></textarea></div>
+<div class="q"><label>Q2. 本日受診以外にかかっている病院はありますか？</label>
+<div class="rg">
+<label><input type="radio" name="c_hosp" value="ない"> ない</label>
+<label><input type="radio" name="c_hosp" value="ある"> ある</label>
+</div>
+<div class="sub" id="c_hosp_sub"><input type="text" id="c_hosp_nm" placeholder="医療機関名をご入力ください"></div>
+</div>
+<div class="q"><label>Q3. 現在使用している医薬品・市販薬・サプリメントはありますか？</label>
+<div class="rg">
+<label><input type="radio" name="c_meds" value="ない"> ない</label>
+<label><input type="radio" name="c_meds" value="ある（お薬手帳に記載あり）"> ある（お薬手帳に記載あり）</label>
+<label><input type="radio" name="c_meds" value="ある（手帳忘れ・未記載品）"> ある（手帳忘れ・未記載品）</label>
+</div>
+<div class="sub" id="c_meds_sub"><input type="text" id="c_meds_nm" placeholder="商品名をご入力ください"></div>
+</div>
+<div class="q"><label>Q4. 今までにかかったことのある病気・現在治療中の疾患はありますか？（複数選択可）</label>
+<div class="rg"><label><input type="radio" name="c_hist_r" value="ない"> ない</label></div>
+<div class="cg">
+<label><input type="checkbox" name="c_hist" value="気管支ぜんそく"> 気管支ぜんそく</label>
+<label><input type="checkbox" name="c_hist" value="アトピー性皮膚炎"> アトピー性皮膚炎</label>
+<label><input type="checkbox" name="c_hist" value="てんかん"> てんかん</label>
+<label><input type="checkbox" name="c_hist" value="貧血"> 貧血</label>
+<label><input type="checkbox" id="c_sk_chk" name="c_hist" value="熱性けいれん"> 熱性けいれん</label>
+</div>
+<div class="sub" id="c_sk_sub"><input type="text" id="c_sk_date" placeholder="最後に発症した時期をご記入ください"></div>
+<textarea id="c_hist_det" placeholder="その他・詳細をご記入ください"></textarea>
+</div>
+<div class="q"><label>Q5. お薬の使用で副作用が出たことはありますか？</label>
+<div class="rg">
+<label><input type="radio" name="c_se" value="ない"> ない</label>
+<label><input type="radio" name="c_se" value="ある"> ある</label>
+</div>
+<div class="sub" id="c_se_sub"><textarea id="c_se_det" placeholder="薬品名・発症時期・症状をご記入ください"></textarea></div>
+</div>
+<div class="q"><label>Q6. 気になる体質はありますか？（複数選択可）</label>
+<div class="rg"><label><input type="radio" name="c_con_r" value="ない"> ない</label></div>
+<div class="cg">
+<label><input type="checkbox" name="c_con" value="便秘しやすい"> 便秘しやすい</label>
+<label><input type="checkbox" name="c_con" value="下痢しやすい"> 下痢しやすい</label>
+<label><input type="checkbox" name="c_con" value="眠れない"> 眠れない</label>
+<label><input type="checkbox" name="c_con" value="胃が弱い"> 胃が弱い</label>
+<label><input type="checkbox" name="c_con" value="かぶれやすい"> かぶれやすい</label>
+<label><input type="checkbox" name="c_con" value="肌が弱い"> 肌が弱い</label>
+<label><input type="checkbox" name="c_con" value="冷え性"> 冷え性</label>
+<label><input type="checkbox" name="c_con" value="頭痛がよくする"> 頭痛がよくする</label>
+</div>
+<input type="text" id="c_con_oth" placeholder="その他があればご記入ください">
+</div>
+<div class="q"><label>Q7. アレルギーはありますか？（複数選択可）</label>
+<div class="rg"><label><input type="radio" name="c_alg_r" value="ない"> ない</label></div>
+<div class="cg">
+<label><input type="checkbox" name="c_alg" value="小麦"> 小麦</label>
+<label><input type="checkbox" name="c_alg" value="卵"> 卵</label>
+<label><input type="checkbox" name="c_alg" value="そば"> そば</label>
+<label><input type="checkbox" name="c_alg" value="牛乳"> 牛乳</label>
+<label><input type="checkbox" name="c_alg" value="その他乳製品"> その他乳製品</label>
+<label><input type="checkbox" name="c_alg" value="ピーナッツ"> ピーナッツ</label>
+<label><input type="checkbox" name="c_alg" value="くるみ"> くるみ</label>
+<label><input type="checkbox" name="c_alg" value="甲殻類"> 甲殻類</label>
+<label><input type="checkbox" name="c_alg" value="魚介類"> 魚介類</label>
+<label><input type="checkbox" name="c_alg" value="花粉"> 花粉</label>
+<label><input type="checkbox" name="c_alg" value="ダニ"> ダニ</label>
+<label><input type="checkbox" name="c_alg" value="ハウスダスト"> ハウスダスト</label>
+<label><input type="checkbox" name="c_alg" value="動物"> 動物</label>
+<label><input type="checkbox" name="c_alg" value="アルコール"> アルコール</label>
+</div>
+<input type="text" id="c_alg_oth" placeholder="その他・詳細があればご記入ください">
+</div>
+<div class="q"><label>Q8. よく口にする飲食物はありますか？（複数選択可）</label>
+<div class="rg"><label><input type="radio" name="c_food_r" value="ない"> ない</label></div>
+<div class="cg">
+<label><input type="checkbox" name="c_food" value="牛乳"> 牛乳</label>
+<label><input type="checkbox" name="c_food" value="乳製品"> 乳製品</label>
+<label><input type="checkbox" name="c_food" value="グレープフルーツ"> グレープフルーツ（ジュース含む）</label>
+</div>
+<input type="text" id="c_food_oth" placeholder="その他があればご記入ください">
+</div>
+<div class="q"><label>Q9. 1日のお食事の回数は？</label>
+<div class="rg">
+<label><input type="radio" name="c_meal" value="1日3回"> 1日3回</label>
+<label><input type="radio" name="c_meal" value="1日2回"> 1日2回</label>
+<label><input type="radio" name="c_meal" value="1日1回"> 1日1回</label>
+<label><input type="radio" name="c_meal" value="1日4回以上"> 1日4回以上</label>
+<label><input type="radio" name="c_meal" value="その他"> その他</label>
+</div>
+<input type="text" id="c_meal_oth" placeholder="その他の場合はご記入ください">
+</div>
+<div class="q"><label>Q10. 帰宅時間を教えてください<br><small style="color:#888;font-weight:normal">（お薬の服用タイミングのアドバイスに使用）</small></label>
+<input type="text" id="c_ret" placeholder="例：16時ごろ"></div>
+<div class="q"><label>Q11. 主な起床時間・就寝時間を教えてください<br><small style="color:#888;font-weight:normal">（お薬の服用タイミングのアドバイスに使用）</small></label>
+<input type="text" id="c_slp" placeholder="例：起床7時・就寝22時"></div>
+<div class="q"><label>Q12. 飲めない形のお薬はありますか？（複数選択可）</label>
+<div class="rg"><label><input type="radio" name="c_mf_r" value="ない"> ない</label></div>
+<div class="cg">
+<label><input type="checkbox" name="c_mf" value="錠剤"> 錠剤</label>
+<label><input type="checkbox" name="c_mf" value="カプセル"> カプセル</label>
+<label><input type="checkbox" name="c_mf" value="粉"> 粉</label>
+<label><input type="checkbox" name="c_mf" value="シロップ"> シロップ</label>
+</div>
+<input type="text" id="c_mf_oth" placeholder="その他があればご記入ください">
+</div>
 </div>
 </div>
 
 <button class="sb" id="sb" type="button">送信する</button>
 </div>
-
-<div id="cm">
-<h2>✅ 送信完了</h2>
-<p>問診票を受け付けました。<br>そのままお待ちください。</p>
-</div>
+<div id="cm"><h2>✅ 送信完了</h2><p>問診票を受け付けました。<br>そのままお待ちください。</p></div>
 
 <script>
 var LID="2009439411-BathCPyi";
@@ -145,15 +350,36 @@ function gc(n){
   for(var i=0;i<e.length;i++){v.push(e[i].value);}
   return v.join(",");
 }
+function gv(id){return document.getElementById(id).value;}
+
+function setupTog(rname,val,sid){
+  function h(){document.getElementById(sid).style.display=gc(rname)===val?"block":"none";}
+var els=document.querySelectorAll('input[name="'+rname+'"]');
+  for(var i=0;i<els.length;i++){els[i].onchange=h;}
+}
+
+function lookupZip(){
+  var z=gv("zp").replace(/-/g,"");
+  if(z.length!==7){alert("7桁の郵便番号を入力してください");return;}
+  fetch("https://zipcloud.ibsnet.co.jp/api/search?zipcode="+z)
+    .then(function(r){return r.json();})
+    .then(function(d){
+      if(d.results){
+        var r=d.results[0];
+        document.getElementById("addr").value=r.address1+r.address2+r.address3;
+      }else{alert("住所が見つかりませんでした");}
+    })
+    .catch(function(){alert("住所検索に失敗しました");});
+}
 
 function showGroup(g){
-document.getElementById("sec-adult").style.display=(g==="a")?"block":"none";
+  document.getElementById("sec-adult").style.display=(g==="a")?"block":"none";
   document.getElementById("sec-child").style.display=(g==="c")?"block":"none";
   document.getElementById("sb").style.display="block";
 }
 
-function ca(){
-  var v=document.getElementById("bd").value;
+function checkAge(){
+  var v=gv("bd");
   if(!v)return;
   var p=v.split("-");
   var b=new Date(parseInt(p[0]),parseInt(p[1])-1,parseInt(p[2]));
@@ -162,41 +388,49 @@ function ca(){
   var m=t.getMonth()-b.getMonth();
   if(m<0||(m===0&&t.getDate()<b.getDate()))a--;
   document.getElementById("ad").innerHTML='<span style="display:inline-block;background:#e8f5e9;color:#2e7d32;font-size:13px;padding:4px 12px;border-radius:20px;">'+a+'</span>';
-  if(a<15){
-    document.getElementById("ag-c").checked=true;
-    showGroup("c");
-  }else{
-    document.getElementById("ag-a").checked=true;
-    showGroup("a");
-  }
+  if(a<15){document.getElementById("ag-c").checked=true;showGroup("c");}
+  else{document.getElementById("ag-a").checked=true;showGroup("a");}
 }
 
 function sv(){
-  var nm=document.getElementById("nm").value.trim();
-  var bd=document.getElementById("bd").value;
+  var nm=gv("nm").trim();
+  var bd=gv("bd");
   var ag=gc("ag");
   if(!nm){alert("お名前を入力してください");return;}
   if(!bd){alert("生年月日を入力してください");return;}
   if(!ag){alert("年齢区分を選択してください");return;}
-  var d={name:nm,birthday:bd,age_group:ag,phone:document.getElementById("ph").value};
+  var d={};
+  d.name=nm;d.furigana=gv("fr");d.birthday=bd;d.age_group=ag;
+  d.phone_home=gv("ph");d.phone_mobile=gv("pm");
+  d.zipcode=gv("zp");d.address=gv("addr");
+  d.generic=gc("gen");
   if(ag==="15歳以上"){
-    d.a1=gc("acm");d.a1d=document.getElementById("acmd").value;
-    d.a2=gc("ao");d.a2d=document.getElementById("aod").value;
-    d.a3=gc("aa");d.a3d=document.getElementById("aad").value;
-    d.a4=gc("ase");d.a4d=document.getElementById("ased").value;
-    d.a5=gc("adi");d.a5o=document.getElementById("ado").value;
-    d.a6=gc("ap");d.a7=gc("ask");d.a8=gc("aal");
-    d.a9=document.getElementById("asy").value;
-    d.a10=document.getElementById("aot").value;
+    d.a_hospital=gc("a_hosp");d.a_hospital_name=gv("a_hosp_nm");
+    d.a_meds=gc("a_meds");d.a_meds_name=gv("a_meds_nm");
+d.a_history=gc("a_hist");d.a_history_other=gv("a_hist_oth");
+    d.a_sideeffect=gc("a_se");d.a_sideeffect_detail=gv("a_se_det");
+    d.a_constitution=gc("a_con");d.a_constitution_other=gv("a_con_oth");
+    d.a_allergy=gc("a_alg");d.a_allergy_other=gv("a_alg_oth");
+    d.a_food=gc("a_food");d.a_food_other=gv("a_food_oth");
+    d.a_smoking=gc("a_smk");d.a_smoking_count=gv("a_smk_cnt");
+    d.a_drinking=gc("a_drk");d.a_drinking_days=gv("a_drk_days");
+    d.a_meals=gc("a_meal");d.a_meals_other=gv("a_meal_oth");
+    d.a_driving=gc("a_drv");d.a_driving_other=gv("a_drv_oth");
+    d.a_danger=gc("a_dng");d.a_danger_other=gv("a_dng_oth");
+    d.a_med_form=gc("a_mf");d.a_med_form_other=gv("a_mf_oth");
+    d.a_female=gc("a_fem");d.a_pregnant_weeks=gv("a_preg_wk");d.a_female_other=gv("a_fem_oth");
   }else{
-    d.c1=document.getElementById("cw").value;
-    d.c2=gc("ccm");d.c2d=document.getElementById("ccmd").value;
-    d.c3=gc("ca");d.c3d=document.getElementById("cad").value;
-    d.c4=gc("cse");d.c4d=document.getElementById("csed").value;
-    d.c5=gc("cc");d.c5n=document.getElementById("ccn").value;
-d.c6=document.getElementById("csy").value;
-    d.c7=document.getElementById("cg").value;
-    d.c8=document.getElementById("cot").value;
+    d.c_weight=gv("cw");
+    d.c_hospital=gc("c_hosp");d.c_hospital_name=gv("c_hosp_nm");
+    d.c_meds=gc("c_meds");d.c_meds_name=gv("c_meds_nm");
+    d.c_history=gc("c_hist");d.c_seizure_date=gv("c_sk_date");d.c_history_detail=gv("c_hist_det");
+    d.c_sideeffect=gc("c_se");d.c_sideeffect_detail=gv("c_se_det");
+    d.c_constitution=gc("c_con");d.c_constitution_other=gv("c_con_oth");
+    d.c_allergy=gc("c_alg");d.c_allergy_other=gv("c_alg_oth");
+    d.c_food=gc("c_food");d.c_food_other=gv("c_food_oth");
+    d.c_meals=gc("c_meal");d.c_meals_other=gv("c_meal_oth");
+    d.c_return_time=gv("c_ret");d.c_sleep_time=gv("c_slp");
+    d.c_med_form=gc("c_mf");d.c_med_form_other=gv("c_mf_oth");
   }
   try{fetch(AID,{method:"POST",mode:"no-cors",headers:{"Content-Type":"application/json"},body:JSON.stringify(d)});}catch(e){}
   try{if(liff.isInClient()){liff.sendMessages([{type:"text",text:"submit:"+nm}]);}}catch(e){}
@@ -204,9 +438,25 @@ d.c6=document.getElementById("csy").value;
   document.getElementById("cm").style.display="block";
 }
 
+setupTog("a_hosp","ある","a_hosp_sub");
+setupTog("a_meds","ある（手帳忘れ・未記載品）","a_meds_sub");
+setupTog("a_se","ある","a_se_sub");
+setupTog("a_smk","吸う","a_smk_sub");
+setupTog("a_drk","飲む","a_drk_sub");
+setupTog("c_hosp","ある","c_hosp_sub");
+setupTog("c_meds","ある（手帳忘れ・未記載品）","c_meds_sub");
+setupTog("c_se","ある","c_se_sub");
+
+document.getElementById("c_sk_chk").onchange=function(){
+  document.getElementById("c_sk_sub").style.display=this.checked?"block":"none";
+};
+document.getElementById("a_preg_chk").onchange=function(){
+  document.getElementById("a_preg_sub").style.display=this.checked?"block":"none";
+};
 document.getElementById("ag-a").onchange=function(){showGroup("a");};
 document.getElementById("ag-c").onchange=function(){showGroup("c");};
-document.getElementById("bd").onchange=ca;
+document.getElementById("bd").onchange=checkAge;
+document.getElementById("zbtn").onclick=lookupZip;
 document.getElementById("sb").onclick=sv;
 try{liff.init({liffId:LID});}catch(e){}
 </script>
