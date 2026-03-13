@@ -37,9 +37,7 @@ function doSubmit() {
   };
   if (ageGroup === "15歳以上") {
     data.current_med     = getChecked("a_current_med");
-Google Drive: Sign-in
-Access Google Drive with a Google account (for personal use) or Google Workspace account (for business use).
-data.current_med_det = document.getElementById("a_current_med_detail").value;
+    data.current_med_det = document.getElementById("a_current_med_detail").value;
     data.otc             = getChecked("a_otc");
     data.otc_det         = document.getElementById("a_otc_detail").value;
     data.allergy         = getChecked("a_allergy");
@@ -74,7 +72,7 @@ data.current_med_det = document.getElementById("a_current_med_detail").value;
   } catch(e) {}
 
   var msg = "【リーフ薬局 問診票】\n名前："+data.name+"\n生年月日："+data.birthday+
-"\n区分："+data.age_group+"\n症状："+(data.symptom"未記入")+
+    "\n区分："+data.age_group+"\n症状："+(data.symptom"未記入")+
     "\nアレルギー："+(data.allergy
 "なし")+"\n服用中の薬："+(data.current_med||"なし");
   try {
@@ -84,7 +82,7 @@ data.current_med_det = document.getElementById("a_current_med_detail").value;
   } catch(e) {}
 
   document.getElementById("form-area").style.display = "none";
-  document.getElementById("complete-msg").style.display = "block";
+document.getElementById("complete-msg").style.display = "block";
 }
 
 window.addEventListener("load", function() {
