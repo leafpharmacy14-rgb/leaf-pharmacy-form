@@ -345,6 +345,7 @@ input[type=radio],input[type=checkbox]{width:18px;height:18px;flex-shrink:0}
 <script>
 var LID="2009439411-BathCPyi";
 var AID="https://script.google.com/macros/s/AKfycbzthokXvdsVI7QVkB96GmP1lK2u_qNqaOqb4_QrpUIpBl0k3qEcw906oXrqFU4czGnk/exec";
+var TK="leaf2024pharmacy";
 
 function gc(n){
   var e=document.querySelectorAll('input[name="'+n+'"]:checked');
@@ -414,6 +415,7 @@ function sv(){
   d.name=nm;d.furigana=gv("fr");d.birthday=bd;d.age_group=ag;
   d.phone_home=gv("ph");d.phone_mobile=gv("pm");
   d.zipcode=gv("zp");d.address=gv("addr");
+  d.token=TK;
   d.generic=gc("gen");
   if(ag==="15歳以上"){
     d.a_hospital=gc("a_hosp");d.a_hospital_name=gv("a_hosp_nm");
