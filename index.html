@@ -18,7 +18,8 @@ body{font-family:"Hiragino Kaku Gothic ProN","Meiryo",sans-serif;background:#f0f
 .q>label{display:block;font-size:14px;font-weight:bold;margin-bottom:6px}
 .req{color:#e53935;font-size:12px;margin-left:4px}
 .note{background:#fff8e1;border-left:4px solid #ffc107;padding:12px;border-radius:4px;font-size:12px;line-height:1.7;margin-bottom:8px}
-input[type=text],input[type=date],input[type=tel],textarea{width:100%;padding:10px;border:1px solid #ccc;border-radius:8px;font-size:14px;margin-top:4px}
+input[type=text],input[type=date],input[type=tel],textarea,select{width:100%;padding:10px;border:1px solid #ccc;border-radius:8px;font-size:14px;margin-top:4px}
+select{background:#fff;appearance:auto}
 textarea{height:72px;resize:vertical}
 .rg,.cg{display:flex;flex-direction:column;gap:8px;margin-top:6px}
 .rg label,.cg label{font-weight:normal;display:flex;align-items:center;gap:8px;cursor:pointer;padding:8px;border:1px solid #ddd;border-radius:8px}
@@ -42,7 +43,12 @@ input[type=radio],input[type=checkbox]{width:18px;height:18px;flex-shrink:0}
 <h2>📋 基本情報</h2>
 <div class="q"><label>お名前（フルネーム）<span class="req">※必須</span></label><input type="text" id="nm" placeholder="例：田中　太郎"></div>
 <div class="q"><label>フリガナ<span class="req">※必須</span></label><input type="text" id="fr" placeholder="例：タナカ　タロウ"></div>
-<div class="q"><label>生年月日<span class="req">※必須</span></label><input type="date" id="bd"><div id="ad" style="margin-top:6px"></div></div>
+<div class="q"><label>生年月日<span class="req">※必須</span></label>
+<div style="display:flex;gap:6px;margin-top:4px">
+<select id="bd-y" style="flex:2"><option value="">年</option></select>
+<select id="bd-m" style="flex:1"><option value="">月</option></select>
+<select id="bd-d" style="flex:1"><option value="">日</option></select>
+</div><div id="ad" style="margin-top:6px"></div></div>
 <div class="q"><label>年齢区分<span class="req">※必須</span></label>
 <div class="rg">
 <label><input type="radio" name="ag" id="ag-a" value="15歳以上"> 15歳以上</label>
@@ -53,6 +59,7 @@ input[type=radio],input[type=checkbox]{width:18px;height:18px;flex-shrink:0}
 <div class="q"><label>郵便番号</label>
 <div class="zrow"><input type="text" id="zp" inputmode="numeric" placeholder="例：1234567（ハイフンなし）"><button class="zbtn" id="zbtn" type="button">住所を検索</button></div></div>
 <div class="q"><label>ご住所</label><input type="text" id="addr" placeholder="郵便番号検索後に自動入力されます"></div>
+<div class="q"><label>ご住所（続き）</label><input type="text" id="addr2" placeholder="丁目・番地・マンション名・部屋番号など"></div>
 <div class="q"><label>ジェネリック医薬品について<span class="req">※必須</span></label>
 <div class="note">2024年10月より医療上の必要がない場合、原則ジェネリック医薬品でのお渡しとなります。先発品ご希望の際は以下をお読みください。<br><br>【後発医薬品のある先発医薬品（長期収載品）の選定療養について】<br>国の制度により、2024年10月から後発医薬品があるお薬で先発医薬品の処方を希望される場合は特別の料金をお支払いいただきます。先発医薬品と後発医薬品の価格差の４分の１相当（2026年6月より２分の１）の料金となります。<br><br>例：先発品1錠100円・後発品1錠60円の場合、差額40円の4分の1の10円（6月以降20円）を通常の患者負担とは別にお支払いいただきます。</div>
 <div class="rg">
@@ -390,23 +397,31 @@ function showGroup(g){
   document.getElementById("sb").style.display="block";
 }
 
+function getbd(){
+  var y=document.getElementById("bd-y").value;
+  var m=document.getElementById("bd-m").value;
+  var d=document.getElementById("bd-d").value;
+  if(!y||!m||!d)return "";
+  return y+"-"+(m.length<2?"0"+m:m)+"-"+(d.length<2?"0"+d:d);
+}
+
 function checkAge(){
-  var v=gv("bd");
+  var v=getbd();
   if(!v)return;
   var p=v.split("-");
   var b=new Date(parseInt(p[0]),parseInt(p[1])-1,parseInt(p[2]));
   var t=new Date();
   var a=t.getFullYear()-b.getFullYear();
-  var m=t.getMonth()-b.getMonth();
-  if(m<0||(m===0&&t.getDate()<b.getDate()))a--;
-  document.getElementById("ad").innerHTML='<span style="display:inline-block;background:#e8f5e9;color:#2e7d32;font-size:13px;padding:4px 12px;border-radius:20px;">'+a+'</span>';
+  var mo=t.getMonth()-b.getMonth();
+  if(mo<0||(mo===0&&t.getDate()<b.getDate()))a--;
+  document.getElementById("ad").innerHTML='<span style="display:inline-block;background:#e8f5e9;color:#2e7d32;font-size:13px;padding:4px 12px;border-radius:20px;">'+a+'歳</span>';
   if(a<15){document.getElementById("ag-c").checked=true;showGroup("c");}
   else{document.getElementById("ag-a").checked=true;showGroup("a");}
 }
 
 function sv(){
   var nm=gv("nm").trim();
-  var bd=gv("bd");
+  var bd=getbd();
   var ag=gc("ag");
   if(!nm){alert("お名前を入力してください");return;}
   if(!bd){alert("生年月日を入力してください");return;}
@@ -414,7 +429,7 @@ function sv(){
   var d={};
   d.name=nm;d.furigana=gv("fr");d.birthday=bd;d.age_group=ag;
   d.phone_home=gv("ph");d.phone_mobile=gv("pm");
-  d.zipcode=gv("zp");d.address=gv("addr");
+  d.zipcode=gv("zp");d.address=gv("addr");d.address2=gv("addr2");
   d.token=TK;
   d.generic=gc("gen");
   if(ag==="15歳以上"){
@@ -498,7 +513,16 @@ setupMutex("c_food_r","c_food");
 setupMutex("c_mf_r","c_mf");
 document.getElementById("ag-a").onchange=function(){showGroup("a");};
 document.getElementById("ag-c").onchange=function(){showGroup("c");};
-document.getElementById("bd").onchange=checkAge;
+(function(){
+  var sy=document.getElementById("bd-y");
+  var sm=document.getElementById("bd-m");
+  var sd=document.getElementById("bd-d");
+  var cy=new Date().getFullYear();
+  for(var yi=1920;yi<=cy;yi++){var oy=document.createElement("option");oy.value=yi;oy.text=yi+"年";sy.appendChild(oy);}
+  for(var mi=1;mi<=12;mi++){var om=document.createElement("option");om.value=mi;om.text=mi+"月";sm.appendChild(om);}
+  for(var di=1;di<=31;di++){var od=document.createElement("option");od.value=di;od.text=di+"日";sd.appendChild(od);}
+  sy.onchange=sm.onchange=sd.onchange=checkAge;
+})();
 document.getElementById("zbtn").onclick=lookupZip;
 document.getElementById("zp").oninput=function(){this.value=this.value.replace(/[^0-9]/g,'');};
 document.getElementById("sb").onclick=sv;
