@@ -446,9 +446,12 @@ d.a_history=gc("a_hist_r")||gc("a_hist");d.a_history_other=gv("a_hist_oth");
     d.c_med_form=gc("c_mf_r")||gc("c_mf");d.c_med_form_other=gv("c_mf_oth");
   }
   try{fetch(AID,{method:"POST",mode:"no-cors",headers:{"Content-Type":"application/json"},body:JSON.stringify(d)});}catch(e){}
-  try{if(liff.isInClient()){liff.sendMessages([{type:"text",text:"問診票の入力が完了しました。"}]);}}catch(e){}
-  document.getElementById("fa").style.display="none";
-  document.getElementById("cm").style.display="block";
+  function done(){document.getElementById("fa").style.display="none";document.getElementById("cm").style.display="block";}
+  try{
+    if(liff.isInClient()){
+      liff.sendMessages([{type:"text",text:"問診票の入力が完了しました。"}]).then(done).catch(done);
+    }else{done();}
+  }catch(e){done();}
 }
 
 setupTog("a_hosp","ある","a_hosp_sub");
