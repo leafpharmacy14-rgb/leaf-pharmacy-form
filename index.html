@@ -458,9 +458,7 @@ setupTog("c_hosp","ある","c_hosp_sub");
 setupTog("c_meds","ある（手帳忘れ・未記載品）","c_meds_sub");
 setupTog("c_se","ある","c_se_sub");
 
-document.getElementById("c_sk_chk").onchange=function(){
-  document.getElementById("c_sk_sub").style.display=this.checked?"block":"none";
-};
+// c_sk_chk handler は setupMutex の後に設定するため後方へ移動
 document.getElementById("a_preg_chk").onchange=function(){
   document.getElementById("a_preg_sub").style.display=this.checked?"block":"none";
 };
@@ -472,6 +470,24 @@ setupMutex("a_dng_r","a_dng");
 setupMutex("a_mf_r","a_mf");
 setupMutex("a_fem_r","a_fem");
 setupMutex("c_hist_r","c_hist");
+// c_hist_r「ない」選択時にc_sk_subも非表示
+document.querySelector('input[name="c_hist_r"]').onchange=function(){
+  if(this.checked){
+    var cbs=document.querySelectorAll('input[name="c_hist"]');
+    for(var i=0;i<cbs.length;i++)cbs[i].checked=false;
+    document.getElementById("c_sk_sub").style.display="none";
+  }
+};
+// 熱性けいれん選択時のみ発症時期欄を表示（setupMutex上書き後に設定）
+document.getElementById("c_sk_chk").onchange=function(){
+  if(this.checked){
+    var r=document.querySelector('input[name="c_hist_r"]');
+    if(r)r.checked=false;
+    document.getElementById("c_sk_sub").style.display="block";
+  }else{
+    document.getElementById("c_sk_sub").style.display="none";
+  }
+};
 setupMutex("c_con_r","c_con");
 setupMutex("c_food_r","c_food");
 setupMutex("c_mf_r","c_mf");
