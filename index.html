@@ -51,7 +51,7 @@ input[type=radio],input[type=checkbox]{width:18px;height:18px;flex-shrink:0}
 <div class="q"><label>固定電話番号</label><input type="tel" id="ph" placeholder="例：03-1234-5678"></div>
 <div class="q"><label>携帯電話番号</label><input type="tel" id="pm" placeholder="例：090-1234-5678"></div>
 <div class="q"><label>郵便番号</label>
-<div class="zrow"><input type="text" id="zp" placeholder="例：1234567（ハイフンなし）"><button class="zbtn" id="zbtn" type="button">住所を検索</button></div></div>
+<div class="zrow"><input type="text" id="zp" inputmode="numeric" placeholder="例：1234567（ハイフンなし）"><button class="zbtn" id="zbtn" type="button">住所を検索</button></div></div>
 <div class="q"><label>ご住所</label><input type="text" id="addr" placeholder="郵便番号検索後に自動入力されます"></div>
 <div class="q"><label>ジェネリック医薬品について<span class="req">※必須</span></label>
 <div class="note">2024年10月より医療上の必要がない場合、原則ジェネリック医薬品でのお渡しとなります。先発品ご希望の際は以下をお読みください。<br><br>【後発医薬品のある先発医薬品（長期収載品）の選定療養について】<br>国の制度により、2024年10月から後発医薬品があるお薬で先発医薬品の処方を希望される場合は特別の料金をお支払いいただきます。先発医薬品と後発医薬品の価格差の４分の１相当（2026年6月より２分の１）の料金となります。<br><br>例：先発品1錠100円・後発品1錠60円の場合、差額40円の4分の1の10円（6月以降20円）を通常の患者負担とは別にお支払いいただきます。</div>
@@ -195,14 +195,13 @@ input[type=radio],input[type=checkbox]{width:18px;height:18px;flex-shrink:0}
 </div>
 <input type="text" id="a_drv_oth" placeholder="その他の場合はご記入ください">
 </div>
-<div class="q"><label>Q12. 危険な作業はしますか？</label>
-<div class="rg">
-<label><input type="radio" name="a_dng" value="しない"> しない</label>
-<label><input type="radio" name="a_dng" value="高所作業"> 高所作業</label>
-<label><input type="radio" name="a_dng" value="危険を伴う機械作業"> 危険を伴う機械作業</label>
-<label><input type="radio" name="a_dng" value="その他"> その他</label>
+<div class="q"><label>Q12. 危険な作業はしますか？（複数選択可）</label>
+<div class="rg"><label><input type="radio" name="a_dng_r" value="しない"> しない</label></div>
+<div class="cg">
+<label><input type="checkbox" name="a_dng" value="高所作業"> 高所作業</label>
+<label><input type="checkbox" name="a_dng" value="危険を伴う機械作業"> 危険を伴う機械作業</label>
 </div>
-<input type="text" id="a_dng_oth" placeholder="その他の場合はご記入ください">
+<input type="text" id="a_dng_oth" placeholder="その他があればご記入ください">
 </div>
 <div class="q"><label>Q13. 服用できない・苦手なタイプのお薬はありますか？（複数選択可）</label>
 <div class="rg"><label><input type="radio" name="a_mf_r" value="ない"> ない</label></div>
@@ -322,7 +321,10 @@ input[type=radio],input[type=checkbox]{width:18px;height:18px;flex-shrink:0}
 <div class="q"><label>Q10. 帰宅時間を教えてください<br><small style="color:#888;font-weight:normal">（お薬の服用タイミングのアドバイスに使用）</small></label>
 <input type="text" id="c_ret" placeholder="例：16時ごろ"></div>
 <div class="q"><label>Q11. 主な起床時間・就寝時間を教えてください<br><small style="color:#888;font-weight:normal">（お薬の服用タイミングのアドバイスに使用）</small></label>
-<input type="text" id="c_slp" placeholder="例：起床7時・就寝22時"></div>
+<div style="display:flex;gap:12px;margin-top:4px">
+<div style="flex:1"><label style="font-size:12px;color:#555;font-weight:normal">起床時間</label><input type="text" id="c_wake" placeholder="例：7時"></div>
+<div style="flex:1"><label style="font-size:12px;color:#555;font-weight:normal">就寝時間</label><input type="text" id="c_sleep" placeholder="例：22時"></div>
+</div></div>
 <div class="q"><label>Q12. 飲めない形のお薬はありますか？（複数選択可）</label>
 <div class="rg"><label><input type="radio" name="c_mf_r" value="ない"> ない</label></div>
 <div class="cg">
@@ -356,6 +358,15 @@ function setupTog(rname,val,sid){
   function h(){document.getElementById(sid).style.display=gc(rname)===val?"block":"none";}
 var els=document.querySelectorAll('input[name="'+rname+'"]');
   for(var i=0;i<els.length;i++){els[i].onchange=h;}
+}
+
+function setupMutex(rname,cbname){
+  var r=document.querySelector('input[name="'+rname+'"]');
+  var cbs=document.querySelectorAll('input[name="'+cbname+'"]');
+  if(r){r.onchange=function(){if(r.checked){for(var i=0;i<cbs.length;i++)cbs[i].checked=false;}};}
+  for(var j=0;j<cbs.length;j++){
+    (function(cb){cb.onchange=function(){if(cb.checked&&r)r.checked=false;};})(cbs[j]);
+  }
 }
 
 function lookupZip(){
@@ -407,33 +418,33 @@ function sv(){
   if(ag==="15歳以上"){
     d.a_hospital=gc("a_hosp");d.a_hospital_name=gv("a_hosp_nm");
     d.a_meds=gc("a_meds");d.a_meds_name=gv("a_meds_nm");
-d.a_history=gc("a_hist");d.a_history_other=gv("a_hist_oth");
+d.a_history=gc("a_hist_r")||gc("a_hist");d.a_history_other=gv("a_hist_oth");
     d.a_sideeffect=gc("a_se");d.a_sideeffect_detail=gv("a_se_det");
-    d.a_constitution=gc("a_con");d.a_constitution_other=gv("a_con_oth");
-    d.a_allergy=gc("a_alg");d.a_allergy_other=gv("a_alg_oth");
-    d.a_food=gc("a_food");d.a_food_other=gv("a_food_oth");
+    d.a_constitution=gc("a_con_r")||gc("a_con");d.a_constitution_other=gv("a_con_oth");
+    d.a_allergy=gc("a_alg_r")||gc("a_alg");d.a_allergy_other=gv("a_alg_oth");
+    d.a_food=gc("a_food_r")||gc("a_food");d.a_food_other=gv("a_food_oth");
     d.a_smoking=gc("a_smk");d.a_smoking_count=gv("a_smk_cnt");
     d.a_drinking=gc("a_drk");d.a_drinking_days=gv("a_drk_days");
     d.a_meals=gc("a_meal");d.a_meals_other=gv("a_meal_oth");
     d.a_driving=gc("a_drv");d.a_driving_other=gv("a_drv_oth");
-    d.a_danger=gc("a_dng");d.a_danger_other=gv("a_dng_oth");
-    d.a_med_form=gc("a_mf");d.a_med_form_other=gv("a_mf_oth");
-    d.a_female=gc("a_fem");d.a_pregnant_weeks=gv("a_preg_wk");d.a_female_other=gv("a_fem_oth");
+    d.a_danger=gc("a_dng_r")||gc("a_dng");d.a_danger_other=gv("a_dng_oth");
+    d.a_med_form=gc("a_mf_r")||gc("a_mf");d.a_med_form_other=gv("a_mf_oth");
+    d.a_female=gc("a_fem_r")||gc("a_fem");d.a_pregnant_weeks=gv("a_preg_wk");d.a_female_other=gv("a_fem_oth");
   }else{
     d.c_weight=gv("cw");
     d.c_hospital=gc("c_hosp");d.c_hospital_name=gv("c_hosp_nm");
     d.c_meds=gc("c_meds");d.c_meds_name=gv("c_meds_nm");
-    d.c_history=gc("c_hist");d.c_seizure_date=gv("c_sk_date");d.c_history_detail=gv("c_hist_det");
+    d.c_history=gc("c_hist_r")||gc("c_hist");d.c_seizure_date=gv("c_sk_date");d.c_history_detail=gv("c_hist_det");
     d.c_sideeffect=gc("c_se");d.c_sideeffect_detail=gv("c_se_det");
-    d.c_constitution=gc("c_con");d.c_constitution_other=gv("c_con_oth");
+    d.c_constitution=gc("c_con_r")||gc("c_con");d.c_constitution_other=gv("c_con_oth");
     d.c_allergy=gc("c_alg");d.c_allergy_other=gv("c_alg_oth");
-    d.c_food=gc("c_food");d.c_food_other=gv("c_food_oth");
+    d.c_food=gc("c_food_r")||gc("c_food");d.c_food_other=gv("c_food_oth");
     d.c_meals=gc("c_meal");d.c_meals_other=gv("c_meal_oth");
-    d.c_return_time=gv("c_ret");d.c_sleep_time=gv("c_slp");
-    d.c_med_form=gc("c_mf");d.c_med_form_other=gv("c_mf_oth");
+    d.c_return_time=gv("c_ret");d.c_wake_time=gv("c_wake");d.c_sleep_time=gv("c_sleep");
+    d.c_med_form=gc("c_mf_r")||gc("c_mf");d.c_med_form_other=gv("c_mf_oth");
   }
   try{fetch(AID,{method:"POST",mode:"no-cors",headers:{"Content-Type":"application/json"},body:JSON.stringify(d)});}catch(e){}
-  try{if(liff.isInClient()){liff.sendMessages([{type:"text",text:"submit:"+nm}]);}}catch(e){}
+  try{if(liff.isInClient()){liff.sendMessages([{type:"text",text:"問診票の入力が完了しました。"}]);}}catch(e){}
   document.getElementById("fa").style.display="none";
   document.getElementById("cm").style.display="block";
 }
@@ -453,10 +464,22 @@ document.getElementById("c_sk_chk").onchange=function(){
 document.getElementById("a_preg_chk").onchange=function(){
   document.getElementById("a_preg_sub").style.display=this.checked?"block":"none";
 };
+setupMutex("a_hist_r","a_hist");
+setupMutex("a_con_r","a_con");
+setupMutex("a_alg_r","a_alg");
+setupMutex("a_food_r","a_food");
+setupMutex("a_dng_r","a_dng");
+setupMutex("a_mf_r","a_mf");
+setupMutex("a_fem_r","a_fem");
+setupMutex("c_hist_r","c_hist");
+setupMutex("c_con_r","c_con");
+setupMutex("c_food_r","c_food");
+setupMutex("c_mf_r","c_mf");
 document.getElementById("ag-a").onchange=function(){showGroup("a");};
 document.getElementById("ag-c").onchange=function(){showGroup("c");};
 document.getElementById("bd").onchange=checkAge;
 document.getElementById("zbtn").onclick=lookupZip;
+document.getElementById("zp").oninput=function(){this.value=this.value.replace(/[^0-9]/g,'');};
 document.getElementById("sb").onclick=sv;
 try{liff.init({liffId:LID});}catch(e){}
 </script>
