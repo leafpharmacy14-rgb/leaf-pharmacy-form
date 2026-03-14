@@ -60,12 +60,9 @@ input[type=radio],input[type=checkbox]{width:18px;height:18px;flex-shrink:0}
 <div class="zrow"><input type="text" id="zp" inputmode="numeric" placeholder="例：1234567（ハイフンなし）"><button class="zbtn" id="zbtn" type="button">住所を検索</button></div></div>
 <div class="q"><label>ご住所</label><input type="text" id="addr" placeholder="郵便番号検索後に自動入力されます"></div>
 <div class="q"><label>ご住所（続き）</label><input type="text" id="addr2" placeholder="丁目・番地・マンション名・部屋番号など"></div>
-<div class="q"><label>ジェネリック医薬品について<span class="req">※必須</span></label>
-<div class="note">2024年10月より医療上の必要がない場合、原則ジェネリック医薬品でのお渡しとなります。先発品ご希望の際は以下をお読みください。<br><br>【後発医薬品のある先発医薬品（長期収載品）の選定療養について】<br>国の制度により、2024年10月から後発医薬品があるお薬で先発医薬品の処方を希望される場合は特別の料金をお支払いいただきます。先発医薬品と後発医薬品の価格差の４分の１相当（2026年6月より２分の１）の料金となります。<br><br>例：先発品1錠100円・後発品1錠60円の場合、差額40円の4分の1の10円（6月以降20円）を通常の患者負担とは別にお支払いいただきます。</div>
-<div class="rg">
-<label><input type="radio" name="gen" value="どちらでもよい"> どちらでもよい</label>
-<label><input type="radio" name="gen" value="先発品を希望"> 先発品を希望</label>
-</div></div>
+<div class="q"><label>ジェネリック医薬品について</label>
+<div class="note">2024年10月より医療上の必要がない場合、原則ジェネリック医薬品でのお渡しとなります。<br>ジェネリック医薬品で良い方は次の設問へお進みください。<br><br>先発品ご希望の方は下記文章をお読みいただき、ご了承のうえ受付スタッフへお申し付けください。<br><br>【後発医薬品のある先発医薬品（長期収載品）の選定療養について】<br>国の制度により、2024年10月から後発医薬品があるお薬で先発医薬品の処方を希望される場合は特別の料金をお支払いいただきます。先発医薬品と後発医薬品の価格差の４分の１相当（2026年6月より２分の１）の料金となります。<br>例：先発品1錠100円・後発品1錠60円の場合、差額40円の4分の1の10円（6月以降20円）を通常の患者負担とは別にお支払いいただきます。</div>
+</div>
 </div>
 
 <!-- 15歳以上 -->
@@ -188,7 +185,6 @@ input[type=radio],input[type=checkbox]{width:18px;height:18px;flex-shrink:0}
 <label><input type="radio" name="a_meal" value="1日2回"> 1日2回</label>
 <label><input type="radio" name="a_meal" value="1日1回"> 1日1回</label>
 <label><input type="radio" name="a_meal" value="1日4回以上"> 1日4回以上</label>
-<label><input type="radio" name="a_meal" value="その他"> その他</label>
 </div>
 <input type="text" id="a_meal_oth" placeholder="その他の場合はご記入ください">
 </div>
@@ -198,7 +194,6 @@ input[type=radio],input[type=checkbox]{width:18px;height:18px;flex-shrink:0}
 <label><input type="radio" name="a_drv" value="運転する（時々）"> 運転する（時々）</label>
 <label><input type="radio" name="a_drv" value="運転する（毎日）"> 運転する（毎日）</label>
 <label><input type="radio" name="a_drv" value="運転する（運転の仕事）"> 運転する（運転の仕事）</label>
-<label><input type="radio" name="a_drv" value="その他"> その他</label>
 </div>
 <input type="text" id="a_drv_oth" placeholder="その他の場合はご記入ください">
 </div>
@@ -321,7 +316,6 @@ input[type=radio],input[type=checkbox]{width:18px;height:18px;flex-shrink:0}
 <label><input type="radio" name="c_meal" value="1日2回"> 1日2回</label>
 <label><input type="radio" name="c_meal" value="1日1回"> 1日1回</label>
 <label><input type="radio" name="c_meal" value="1日4回以上"> 1日4回以上</label>
-<label><input type="radio" name="c_meal" value="その他"> その他</label>
 </div>
 <input type="text" id="c_meal_oth" placeholder="その他の場合はご記入ください">
 </div>
@@ -508,6 +502,7 @@ document.getElementById("c_sk_chk").onchange=function(){
     document.getElementById("c_sk_sub").style.display="none";
   }
 };
+setupMutex("c_alg_r","c_alg");
 setupMutex("c_con_r","c_con");
 setupMutex("c_food_r","c_food");
 setupMutex("c_mf_r","c_mf");
