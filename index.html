@@ -519,6 +519,7 @@ document.getElementById("ag-c").onchange=function(){showGroup("c");};
   var sd=document.getElementById("bd-d");
   var cy=new Date().getFullYear();
   for(var yi=1920;yi<=cy;yi++){var oy=document.createElement("option");oy.value=yi;oy.text=yi+"年";sy.appendChild(oy);}
+  sy.value=2000;
   for(var mi=1;mi<=12;mi++){var om=document.createElement("option");om.value=mi;om.text=mi+"月";sm.appendChild(om);}
   for(var di=1;di<=31;di++){var od=document.createElement("option");od.value=di;od.text=di+"日";sd.appendChild(od);}
   sy.onchange=sm.onchange=sd.onchange=checkAge;
