@@ -449,11 +449,15 @@ d.a_history=gc("a_hist_r")||gc("a_hist");d.a_history_other=gv("a_hist_oth");
     d.a_danger=gc("a_dng_r")||gc("a_dng");d.a_danger_other=gv("a_dng_oth");
     d.a_med_form=gc("a_mf_r")||gc("a_mf");d.a_med_form_other=gv("a_mf_oth");
     d.a_female=gc("a_fem_r")||gc("a_fem");
-    var dueY=document.getElementById("due-y").value;
-    var dueM=document.getElementById("due-m").value;
-    var dueDD=document.getElementById("due-d").value;
-    d.a_due_date=(dueY&&dueM&&dueDD)?dueY+"-"+(dueM.length<2?"0"+dueM:dueM)+"-"+(dueDD.length<2?"0"+dueDD:dueDD):"";
-    d.a_pregnant_weeks=document.getElementById("preg-weeks").textContent;
+    if(document.getElementById("a_preg_chk").checked){
+      var dueY=document.getElementById("due-y").value;
+      var dueM=document.getElementById("due-m").value;
+      var dueDD=document.getElementById("due-d").value;
+      d.a_due_date=(dueY&&dueM&&dueDD)?dueY+"-"+(dueM.length<2?"0"+dueM:dueM)+"-"+(dueDD.length<2?"0"+dueDD:dueDD):"";
+      d.a_pregnant_weeks=document.getElementById("preg-weeks").textContent;
+    }else{
+      d.a_due_date="";d.a_pregnant_weeks="";
+    }
     d.a_female_other=gv("a_fem_oth");
   }else{
     d.c_weight=gv("cw");
