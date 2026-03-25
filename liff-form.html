@@ -167,29 +167,32 @@ function doSubmit() {
 function sendData(nb, vi, imgs) {
   var st = document.getElementById("statusMsg");
   st.textContent = "サーバーに送信中...";
-  fetch(GAS_URL, {
-    method: "POST",
-    body: JSON.stringify({
-      type: "prescription_form",
-      userId: uid,
-      lineName: uname || uid || "不明",
-      notebook: nb,
-      visitTime: vi,
-      images: imgs
-    })
+
+  // ①先に患者メッセージをLINEチャットに送信
+  var sendLineMsg = uid
+    ? liff.sendMessages([{
+        type: "text",
+        text: "処方箋を送信しました📩\n写真：" + imgs.length + "枚\nお薬手帳：" + nb + "\n来局予定：" + vi
+      }]).catch(function(){})
+    : Promise.resolve();
+
+  // ②その後にGASへ送信（薬局の自動返信はGAS側で送られる）
+  sendLineMsg.then(function() {
+    return fetch(GAS_URL, {
+      method: "POST",
+      body: JSON.stringify({
+        type: "prescription_form",
+        userId: uid,
+        lineName: uname || uid || "不明",
+        notebook: nb,
+        visitTime: vi,
+        images: imgs
+      })
+    });
   })
   .then(function(r) { return r.json(); })
   .then(function(res) {
     if (res.status === "ok") {
-      // LINEチャットに送信内容を通知
-      if (uid) {
-        try {
-          liff.sendMessages([{
-            type: "text",
-            text: "処方箋を送信しました📩\n写真：" + imgs.length + "枚\nお薬手帳：" + nb + "\n来局予定：" + vi
-          }]).catch(function(){});
-        } catch(e) {}
-      }
       st.textContent = "✅ 送信が完了しました！"; st.className = "ok";
       document.getElementById("submitBtn").textContent = "送信完了";
       setTimeout(function() {
