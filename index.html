@@ -42,7 +42,7 @@ input[type=radio],input[type=checkbox]{width:18px;height:18px;flex-shrink:0}
 <div class="cd">
 <h2>📋 基本情報</h2>
 <div class="q"><label>お名前（フルネーム）<span class="req">※必須</span></label><input type="text" id="nm" placeholder="例：田中　太郎"></div>
-<div class="q"><label>フリガナ<span class="req">※必須</span></label><input type="text" id="fr" placeholder="例：タナカ　タロウ"></div>
+<div class="q"><label>フリガナ<span class="req">※必須</span></label><input type="text" id="fr" placeholder="例：タナカ　タロウ" oninput="this.value=this.value.replace(/[\u3041-\u3096]/g, function(s){return String.fromCharCode(s.charCodeAt(0)+0x60)})"></div>
 <div class="q"><label>生年月日<span class="req">※必須</span></label>
 <div style="display:flex;gap:6px;margin-top:4px">
 <select id="bd-y" style="flex:2"><option value="">年</option></select>
