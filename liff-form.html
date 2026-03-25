@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>処方箋受付フォーム</title>
+<script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+<style>
+  body{font-family:sans-serif;padding:24px 16px;background:#f5f5f5;font-size:20px;margin:0}
+  h2{color:#06c755;font-size:28px;text-align:center;margin-bottom:8px;font-weight:bold}
+  #liffStatus{text-align:center;font-size:14px;padding:4px 0 12px;min-height:20px;color:#aaa}
+  .card{background:#fff;border-radius:12px;padding:20px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+  .card h3{font-size:22px;color:#555;margin:0 0 14px;font-weight:bold}
+  .req{color:#e00;margin-left:4px}
+  label{display:flex;align-items:center;padding:18px 16px;margin:6px 0;border:2px solid #e8e8e8;border-radius:10px;cursor:pointer;font-size:21px;transition:border-color .15s,background .15s}
+  label.selected{border-color:#06c755;background:#f0fff5}
+  input[type=radio]{margin-right:12px;accent-color:#06c755;width:22px;height:22px;flex-shrink:0}
+  .photo-slots{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:8px}
+  .slot{border:2px dashed #ccc;border-radius:10px;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;font-size:13px;color:#aaa;position:relative;overflow:hidden;transition:border-color .15s}
+  .slot.filled{border-color:#06c755;border-style:solid}
+  .slot img{width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0}
+  .slot .lbl{position:relative;z-index:1;text-align:center;line-height:1.7}
+  .slot.filled .lbl{display:none}
+  .del-btn{position:absolute;top:3px;right:3px;width:24px;height:24px;background:rgba(0,0,0,.55);color:#fff;border:none;border-radius:50%;font-size:15px;cursor:pointer;z-index:2;display:none;align-items:center;justify-content:center;line-height:1;padding:0}
+  .slot.filled .del-btn{display:flex}
+  #submitBtn{width:100%;padding:22px;background:#06c755;color:#fff;border:none;border-radius:14px;font-size:24px;font-weight:bold;cursor:pointer;margin-top:8px;letter-spacing:.5px}
+  #submitBtn:disabled{background:#bbb;cursor:not-allowed}
+  #statusMsg{text-align:center;margin-top:12px;font-size:18px;min-height:22px}
+  .ok{color:#06c755}.err{color:#e00}
+</style>
+</head>
+<body>
+<h2>処方箋の受付・手帳等の写真送信</h2>
+<div id="liffStatus">読み込み中...</div>
+
+<div class="card">
+  <h3>お薬手帳<span class="req">*</span></h3>
+  <label><input type="radio" name="notebook" value="持参する">持参する</label>
+  <label><input type="radio" name="notebook" value="アプリ">アプリ</label>
+  <label><input type="radio" name="notebook" value="持参しない">持参しない</label>
+  <label><input type="radio" name="notebook" value="処方箋以外の為該当しない">処方箋以外の為該当しない</label>
+</div>
+
+<div class="card">
+  <h3>来局予定<span class="req">*</span></h3>
+  <label><input type="radio" name="visit" value="当日中">当日中</label>
+  <label><input type="radio" name="visit" value="明日以降">明日以降</label>
+  <label><input type="radio" name="visit" value="未定">未定</label>
+  <label><input type="radio" name="visit" value="処方箋以外の為該当しない">処方箋以外の為該当しない</label>
+</div>
+
+<div class="card">
+  <h3>処方箋の写真<span class="req">*</span>（最大9枚）</h3>
+  <div class="photo-slots" id="slots"></div>
+</div>
+
+<button id="submitBtn" disabled onclick="doSubmit()">送信する</button>
+<div id="statusMsg"></div>
+
+<script>
+var GAS_URL = "https://script.google.com/macros/s/AKfycbzlkTAtaYbdFYXjh_ep3_xkt-Sj-9pcprfFwEcuvo6wGRdpaULvMqiNau_pVc42vCULBA/exec";
+var LIFF_ID = "2009439411-oYud9jna";
+var uid = "", uname = "";
+var slotFiles = [null,null,null,null,null,null,null,null,null];
+
+// スロット生成
+var labels = ["1枚目","2枚目","3枚目","4枚目","5枚目","6枚目","7枚目","8枚目","9枚目"];
+var slotsEl = document.getElementById("slots");
+for (var i = 0; i < 9; i++) {
+  (function(idx) {
+    var req = idx === 0 ? '<br><span style="color:#e00;font-size:11px">必須</span>' : '';
+    slotsEl.innerHTML +=
+      '<div class="slot" id="slot'+idx+'" onclick="openPicker('+idx+')">' +
+      '<button class="del-btn" onclick="delSlot(event,'+idx+')">×</button>' +
+      '<div class="lbl">📷<br>'+labels[idx]+req+'</div>' +
+      '<input type="file" id="file'+idx+'" accept="image/*" style="display:none" onchange="onFile('+idx+')">' +
+      '</div>';
+  })(i);
+}
+
+// ラジオボタン
+document.querySelectorAll("input[type=radio]").forEach(function(r) {
+  r.addEventListener("change", function() {
+    document.querySelectorAll("input[name="+this.name+"]").forEach(function(x) {
+      x.parentNode.classList.remove("selected");
+    });
+    this.parentNode.classList.add("selected");
+    check();
+  });
+});
+
+function check() {
+  var nb = document.querySelector("input[name=notebook]:checked");
+  var vi = document.querySelector("input[name=visit]:checked");
+  document.getElementById("submitBtn").disabled = !(nb && vi && slotFiles[0]);
+}
+
+function openPicker(i) { document.getElementById("file"+i).click(); }
+
+function onFile(idx) {
+  var f = document.getElementById("file"+idx).files[0];
+  if (!f) return;
+  slotFiles[idx] = f;
+  var r = new FileReader();
+  r.onload = function(ev) {
+    var slot = document.getElementById("slot"+idx);
+    slot.classList.add("filled");
+    var ex = slot.querySelector("img");
+    if (ex) slot.removeChild(ex);
+    var img = document.createElement("img");
+    img.src = ev.target.result;
+    slot.appendChild(img);
+  };
+  r.readAsDataURL(f);
+  check();
+}
+
+function delSlot(e, idx) {
+  e.stopPropagation();
+  slotFiles[idx] = null;
+  var slot = document.getElementById("slot"+idx);
+  slot.classList.remove("filled");
+  var img = slot.querySelector("img");
+  if (img) slot.removeChild(img);
+  document.getElementById("file"+idx).value = "";
+  check();
+}
+
+function resize(file, max, cb) {
+  var r = new FileReader();
+  r.onload = function(ev) {
+    var im = new Image();
+    im.onload = function() {
+      var c = document.createElement("canvas");
+      var w = im.width, h = im.height;
+      if (w > max || h > max) {
+        if (w > h) { c.width = max; c.height = Math.round(h * max / w); }
+        else { c.height = max; c.width = Math.round(w * max / h); }
+      } else { c.width = w; c.height = h; }
+      c.getContext("2d").drawImage(im, 0, 0, c.width, c.height);
+      cb(c.toDataURL("image/jpeg", 0.85).split(",")[1]);
+    };
+    im.src = ev.target.result;
+  };
+  r.readAsDataURL(file);
+}
+
+function doSubmit() {
+  var nb = document.querySelector("input[name=notebook]:checked").value;
+  var vi = document.querySelector("input[name=visit]:checked").value;
+  var files = slotFiles.filter(function(f) { return f != null; });
+  var btn = document.getElementById("submitBtn");
+  var st = document.getElementById("statusMsg");
+  btn.disabled = true; btn.textContent = "送信中...";
+  st.textContent = "画像を処理中です..."; st.className = "";
+  var imgs = [], done = 0;
+  for (var i = 0; i < files.length; i++) {
+    (function(idx) {
+      resize(files[idx], 1200, function(b64) {
+        imgs[idx] = b64; done++;
+        if (done === files.length) sendData(nb, vi, imgs);
+      });
+    })(i);
+  }
+}
+
+function sendData(nb, vi, imgs) {
+  var st = document.getElementById("statusMsg");
+  st.textContent = "サーバーに送信中...";
+  fetch(GAS_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      type: "prescription_form",
+      userId: uid,
+      lineName: uname || uid || "不明",
+      notebook: nb,
+      visitTime: vi,
+      images: imgs
+    })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(res) {
+    if (res.status === "ok") {
+      // LINEチャットに「処方箋を送信しました」と送る
+      if (uid) {
+        try {
+          liff.sendMessages([{
+            type: "text",
+            text: "処方箋を送信しました📩\nお薬手帳：" + document.querySelector("input[name=notebook]:checked").value + "\n来局予定：" + document.querySelector("input[name=visit]:checked").value
+          }]).catch(function(){});
+        } catch(e) {}
+      }
+      st.textContent = "✅ 送信が完了しました！"; st.className = "ok";
+      document.getElementById("submitBtn").textContent = "送信完了";
+      setTimeout(function() {
+        try { liff.closeWindow(); } catch(ex) {
+          try { window.close(); } catch(e2) {}
+        }
+      }, 1500);
+    } else { throw new Error(); }
+  })
+  .catch(function() {
+    var st = document.getElementById("statusMsg");
+    st.textContent = "❌ エラーが発生しました。再度お試しください。"; st.className = "err";
+    var btn = document.getElementById("submitBtn");
+    btn.disabled = false; btn.textContent = "送信する";
+  });
+}
+
+// LIFF初期化
+var dbg = document.getElementById("liffStatus");
+liff.init({ liffId: LIFF_ID })
+  .then(function() { return liff.getProfile(); })
+  .then(function(p) {
+    uid = p.userId;
+    uname = p.displayName;
+    dbg.textContent = "✅ " + p.displayName;
+    dbg.style.color = "#06c755";
+  })
+  .catch(function(e) {
+    dbg.textContent = "LINE未連携（送信は可能です）";
+    dbg.style.color = "#aaa";
+  });
+</script>
+</body>
+</html>
