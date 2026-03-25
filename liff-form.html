@@ -181,12 +181,12 @@ function sendData(nb, vi, imgs) {
   .then(function(r) { return r.json(); })
   .then(function(res) {
     if (res.status === "ok") {
-      // LINEチャットに「処方箋を送信しました」と送る
+      // LINEチャットに送信内容を通知
       if (uid) {
         try {
           liff.sendMessages([{
             type: "text",
-            text: "処方箋を送信しました📩\nお薬手帳：" + document.querySelector("input[name=notebook]:checked").value + "\n来局予定：" + document.querySelector("input[name=visit]:checked").value
+            text: "処方箋を送信しました📩\n写真：" + imgs.length + "枚\nお薬手帳：" + nb + "\n来局予定：" + vi
           }]).catch(function(){});
         } catch(e) {}
       }
