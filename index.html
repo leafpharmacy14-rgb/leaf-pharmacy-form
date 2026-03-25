@@ -569,5 +569,26 @@ function calcPregWeeks(){
 })();
 try{liff.init({liffId:LID});}catch(e){}
 </script>
+<script>
+(function() {
+  var el = document.getElementById('fr');
+  var composing = false;
+  el.addEventListener('compositionstart', function() { composing = true; });
+  el.addEventListener('compositionend', function() {
+    composing = false;
+    setTimeout(function() { convert(el); }, 0);
+  });
+  el.addEventListener('input', function() {
+    if (!composing) convert(el);
+  });
+  function convert(el) {
+    var s = el.selectionStart, e = el.selectionEnd;
+    var v = el.value.replace(/[\u3041-\u3096]/g, function(c) {
+      return String.fromCharCode(c.charCodeAt(0) + 0x60);
+    });
+    if (v !== el.value) { el.value = v; el.setSelectionRange(s, e); }
+  }
+})();
+</script>
 </body>
 </html>
