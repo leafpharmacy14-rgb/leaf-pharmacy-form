@@ -168,39 +168,37 @@ function sendData(nb, vi, imgs) {
   var st = document.getElementById("statusMsg");
   st.textContent = "サーバーに送信中...";
 
-  // ①先に患者メッセージをLINEチャットに送信
-  var sendLineMsg = uid
-    ? liff.sendMessages([{
-        type: "text",
-        text: "処方箋を送信しました📩\n写真：" + imgs.length + "枚\nお薬手帳：" + nb + "\n来局予定：" + vi
-      }]).catch(function(){})
-    : Promise.resolve();
-
-  // ②その後にGASへ送信（薬局の自動返信はGAS側で送られる）
-  sendLineMsg.then(function() {
-    return fetch(GAS_URL, {
-      method: "POST",
-      body: JSON.stringify({
-        type: "prescription_form",
-        userId: uid,
-        lineName: uname || uid || "不明",
-        notebook: nb,
-        visitTime: vi,
-        images: imgs
-      })
-    });
+  // ①先にGASへ送信（PDF保存・スプレッドシート記録・薬局からの自動返信）
+  fetch(GAS_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      type: "prescription_form",
+      userId: uid,
+      lineName: uname || uid || "不明",
+      notebook: nb,
+      visitTime: vi,
+      images: imgs
+    })
   })
   .then(function(r) { return r.json(); })
   .then(function(res) {
-    if (res.status === "ok") {
-      st.textContent = "✅ 送信が完了しました！"; st.className = "ok";
-      document.getElementById("submitBtn").textContent = "送信完了";
-      setTimeout(function() {
-        try { liff.closeWindow(); } catch(ex) {
-          try { window.close(); } catch(e2) {}
-        }
-      }, 1500);
-    } else { throw new Error(); }
+    if (res.status !== "ok") throw new Error();
+    // ②GAS完了後にLINEチャットへ患者メッセージを送信
+    return uid
+      ? liff.sendMessages([{
+          type: "text",
+          text: "処方箋を送信しました📩\n写真：" + imgs.length + "枚\nお薬手帳：" + nb + "\n来局予定：" + vi
+        }]).catch(function(){})
+      : Promise.resolve();
+  })
+  .then(function() {
+    st.textContent = "✅ 送信が完了しました！"; st.className = "ok";
+    document.getElementById("submitBtn").textContent = "送信完了";
+    setTimeout(function() {
+      try { liff.closeWindow(); } catch(ex) {
+        try { window.close(); } catch(e2) {}
+      }
+    }, 1500);
   })
   .catch(function() {
     var st = document.getElementById("statusMsg");
