@@ -7,7 +7,8 @@
 <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 <style>
   body{font-family:sans-serif;padding:24px 16px;background:#f5f5f5;font-size:20px;margin:0}
-  h2{color:#06c755;font-size:28px;text-align:center;margin-bottom:8px;font-weight:bold}
+  h2{color:#06c755;font-size:28px;text-align:center;margin-bottom:8px;font-weight:bold;line-height:1.4}
+  .label-small{font-size:15px}
   #liffStatus{text-align:center;font-size:14px;padding:4px 0 12px;min-height:20px;color:#aaa}
   .card{background:#fff;border-radius:12px;padding:20px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
   .card h3{font-size:22px;color:#555;margin:0 0 14px;font-weight:bold}
@@ -27,10 +28,12 @@
   #submitBtn:disabled{background:#bbb;cursor:not-allowed}
   #statusMsg{text-align:center;margin-top:12px;font-size:18px;min-height:22px}
   .ok{color:#06c755}.err{color:#e00}
+  textarea{width:100%;box-sizing:border-box;border:2px solid #e8e8e8;border-radius:10px;padding:14px;font-size:18px;font-family:sans-serif;resize:vertical;min-height:90px;outline:none;transition:border-color .15s}
+  textarea:focus{border-color:#06c755}
 </style>
 </head>
 <body>
-<h2>処方箋の受付・手帳等の写真送信</h2>
+<h2>処方箋の受付<br>手帳等の写真送信</h2>
 <div id="liffStatus">読み込み中...</div>
 
 <div class="card">
@@ -38,7 +41,7 @@
   <label><input type="radio" name="notebook" value="持参する">持参する</label>
   <label><input type="radio" name="notebook" value="アプリ">アプリ</label>
   <label><input type="radio" name="notebook" value="持参しない">持参しない</label>
-  <label><input type="radio" name="notebook" value="処方箋以外の為該当しない">処方箋以外の為該当しない</label>
+  <label><input type="radio" name="notebook" value="処方箋以外の為該当しない"><span class="label-small">処方箋以外の為該当しない</span></label>
 </div>
 
 <div class="card">
@@ -46,7 +49,12 @@
   <label><input type="radio" name="visit" value="当日中">当日中</label>
   <label><input type="radio" name="visit" value="明日以降">明日以降</label>
   <label><input type="radio" name="visit" value="未定">未定</label>
-  <label><input type="radio" name="visit" value="処方箋以外の為該当しない">処方箋以外の為該当しない</label>
+  <label><input type="radio" name="visit" value="処方箋以外の為該当しない"><span class="label-small">処方箋以外の為該当しない</span></label>
+</div>
+
+<div class="card">
+  <h3>お子さまの体重・その他</h3>
+  <textarea id="freeText" placeholder="例）体重 8.5kg　など、薬剤師に伝えたいことがあればご記入ください"></textarea>
 </div>
 
 <div class="card">
@@ -148,6 +156,7 @@ function resize(file, max, cb) {
 function doSubmit() {
   var nb = document.querySelector("input[name=notebook]:checked").value;
   var vi = document.querySelector("input[name=visit]:checked").value;
+  var ft = document.getElementById("freeText").value.trim();
   var files = slotFiles.filter(function(f) { return f != null; });
   var btn = document.getElementById("submitBtn");
   var st = document.getElementById("statusMsg");
@@ -158,13 +167,13 @@ function doSubmit() {
     (function(idx) {
       resize(files[idx], 1200, function(b64) {
         imgs[idx] = b64; done++;
-        if (done === files.length) sendData(nb, vi, imgs);
+        if (done === files.length) sendData(nb, vi, ft, imgs);
       });
     })(i);
   }
 }
 
-function sendData(nb, vi, imgs) {
+function sendData(nb, vi, ft, imgs) {
   var st = document.getElementById("statusMsg");
   st.textContent = "サーバーに送信中...";
 
@@ -177,6 +186,7 @@ function sendData(nb, vi, imgs) {
       lineName: uname || uid || "不明",
       notebook: nb,
       visitTime: vi,
+      freeText: ft,
       images: imgs
     })
   })
@@ -184,11 +194,10 @@ function sendData(nb, vi, imgs) {
   .then(function(res) {
     if (res.status !== "ok") throw new Error();
     // ②GAS完了後にLINEチャットへ患者メッセージを送信
+    var lineText = "処方箋を送信しました📩\n写真：" + imgs.length + "枚\nお薬手帳：" + nb + "\n来局予定：" + vi;
+    if (ft) lineText += "\nメモ：" + ft;
     return uid
-      ? liff.sendMessages([{
-          type: "text",
-          text: "処方箋を送信しました📩\n写真：" + imgs.length + "枚\nお薬手帳：" + nb + "\n来局予定：" + vi
-        }]).catch(function(){})
+      ? liff.sendMessages([{ type: "text", text: lineText }]).catch(function(){})
       : Promise.resolve();
   })
   .then(function() {
