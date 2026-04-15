@@ -222,15 +222,7 @@ input[type=radio],input[type=checkbox]{width:18px;height:18px;flex-shrink:0}
 <label><input type="checkbox" id="a_preg_chk" name="a_fem" value="妊娠中"> 妊娠中</label>
 <label><input type="checkbox" name="a_fem" value="授乳中"> 授乳中</label>
 </div>
-<div class="sub" id="a_preg_sub">
-  <label style="font-size:13px;color:#555;font-weight:normal;margin-bottom:4px;display:block">出産予定日</label>
-  <div style="display:flex;gap:6px;margin-bottom:8px">
-    <select id="due-y" style="flex:2"></select>
-    <select id="due-m" style="flex:1"></select>
-    <select id="due-d" style="flex:1"></select>
-  </div>
-  <div id="preg-weeks" style="background:#e8f5e9;color:#2e7d32;font-size:13px;padding:4px 12px;border-radius:20px;display:inline-block"></div>
-</div>
+<div class="sub" id="a_preg_sub"><input type="text" id="a_preg_wk" placeholder="現在の週数をご記入ください"></div>
 <input type="text" id="a_fem_oth" placeholder="その他があればご記入ください">
 </div>
 </div>
@@ -349,11 +341,11 @@ input[type=radio],input[type=checkbox]{width:18px;height:18px;flex-shrink:0}
 
 <button class="sb" id="sb" type="button">送信する</button>
 </div>
-<div id="cm"><h2>✅ 送信完了</h2><p>問診票を受け付けました。<br>そのままお待ちください。</p></div>
+<div id="cm"><h2>✅ 送信完了</h2><p>問診票を受け付けました。<br>右上の×を押して、この画面を閉じてください。</p></div>
 
 <script>
 var LID="2009439411-BathCPyi";
-var AID="https://script.google.com/macros/s/AKfycbzsuUC2unp_OqKQaUyDWorYp0hOtinzIp5_ChIh1RqQCc4W9_2TovVtJQh2lJ5I-rl6/exec";
+var AID="https://script.google.com/macros/s/AKfycbzthokXvdsVI7QVkB96GmP1lK2u_qNqaOqb4_QrpUIpBl0k3qEcw906oXrqFU4czGnk/exec";
 var TK="leaf2024pharmacy";
 
 function gc(n){
@@ -448,17 +440,7 @@ d.a_history=gc("a_hist_r")||gc("a_hist");d.a_history_other=gv("a_hist_oth");
     d.a_driving=gc("a_drv");d.a_driving_other=gv("a_drv_oth");
     d.a_danger=gc("a_dng_r")||gc("a_dng");d.a_danger_other=gv("a_dng_oth");
     d.a_med_form=gc("a_mf_r")||gc("a_mf");d.a_med_form_other=gv("a_mf_oth");
-    d.a_female=gc("a_fem_r")||gc("a_fem");
-    if(document.getElementById("a_preg_chk").checked){
-      var dueY=document.getElementById("due-y").value;
-      var dueM=document.getElementById("due-m").value;
-      var dueDD=document.getElementById("due-d").value;
-      d.a_due_date=(dueY&&dueM&&dueDD)?dueY+"-"+(dueM.length<2?"0"+dueM:dueM)+"-"+(dueDD.length<2?"0"+dueDD:dueDD):"";
-      d.a_pregnant_weeks=document.getElementById("preg-weeks").textContent;
-    }else{
-      d.a_due_date="";d.a_pregnant_weeks="";
-    }
-    d.a_female_other=gv("a_fem_oth");
+    d.a_female=gc("a_fem_r")||gc("a_fem");d.a_pregnant_weeks=gv("a_preg_wk");d.a_female_other=gv("a_fem_oth");
   }else{
     d.c_weight=gv("cw");
     d.c_hospital=gc("c_hosp");d.c_hospital_name=gv("c_hosp_nm");
@@ -490,6 +472,10 @@ setupTog("c_hosp","ある","c_hosp_sub");
 setupTog("c_meds","ある（手帳忘れ・未記載品）","c_meds_sub");
 setupTog("c_se","ある","c_se_sub");
 
+// c_sk_chk handler は setupMutex の後に設定するため後方へ移動
+document.getElementById("a_preg_chk").onchange=function(){
+  document.getElementById("a_preg_sub").style.display=this.checked?"block":"none";
+};
 setupMutex("a_hist_r","a_hist");
 setupMutex("a_con_r","a_con");
 setupMutex("a_alg_r","a_alg");
@@ -497,11 +483,6 @@ setupMutex("a_food_r","a_food");
 setupMutex("a_dng_r","a_dng");
 setupMutex("a_mf_r","a_mf");
 setupMutex("a_fem_r","a_fem");
-// a_preg_chk は setupMutex("a_fem_r","a_fem") の後に設定しないと上書きされる
-document.getElementById("a_preg_chk").onchange=function(){
-  document.getElementById("a_preg_sub").style.display=this.checked?"block":"none";
-  if(this.checked){var r=document.querySelector('input[name="a_fem_r"]');if(r)r.checked=false;}
-};
 setupMutex("c_hist_r","c_hist");
 // c_hist_r「ない」選択時にc_sk_subも非表示
 document.querySelector('input[name="c_hist_r"]').onchange=function(){
@@ -540,55 +521,7 @@ document.getElementById("ag-c").onchange=function(){showGroup("c");};
 document.getElementById("zbtn").onclick=lookupZip;
 document.getElementById("zp").oninput=function(){this.value=this.value.replace(/[^0-9]/g,'');};
 document.getElementById("sb").onclick=sv;
-function calcPregWeeks(){
-  var y=document.getElementById("due-y").value;
-  var m=document.getElementById("due-m").value;
-  var d=document.getElementById("due-d").value;
-  var el=document.getElementById("preg-weeks");
-  if(!y||!m||!d){el.textContent="";return;}
-  var due=new Date(parseInt(y),parseInt(m)-1,parseInt(d));
-  var today=new Date();today.setHours(0,0,0,0);
-  var diffDays=Math.round((due-today)/(1000*60*60*24));
-  var totalDays=40*7-diffDays;
-  if(totalDays<0||totalDays>40*7+14){el.textContent="日付を確認してください";return;}
-  var wk=Math.floor(totalDays/7);
-  var dy=totalDays%7;
-  el.textContent="現在の妊娠週数："+wk+"週"+dy+"日";
-}
-(function(){
-  var dy=document.getElementById("due-y");
-  var dm=document.getElementById("due-m");
-  var dd=document.getElementById("due-d");
-  var today=new Date();
-  var cy=today.getFullYear();
-  for(var yi=cy;yi<=cy+2;yi++){var oy=document.createElement("option");oy.value=yi;oy.text=yi+"年";if(yi===cy)oy.selected=true;dy.appendChild(oy);}
-  for(var mi=1;mi<=12;mi++){var om=document.createElement("option");om.value=mi;om.text=mi+"月";if(mi===today.getMonth()+1)om.selected=true;dm.appendChild(om);}
-  for(var di=1;di<=31;di++){var od=document.createElement("option");od.value=di;od.text=di+"日";if(di===today.getDate())od.selected=true;dd.appendChild(od);}
-  dy.onchange=dm.onchange=dd.onchange=calcPregWeeks;
-  calcPregWeeks();
-})();
 try{liff.init({liffId:LID});}catch(e){}
-</script>
-<script>
-(function() {
-  var el = document.getElementById('fr');
-  var composing = false;
-  el.addEventListener('compositionstart', function() { composing = true; });
-  el.addEventListener('compositionend', function() {
-    composing = false;
-    setTimeout(function() { convert(el); }, 0);
-  });
-  el.addEventListener('input', function() {
-    if (!composing) convert(el);
-  });
-  function convert(el) {
-    var s = el.selectionStart, e = el.selectionEnd;
-    var v = el.value.replace(/[\u3041-\u3096]/g, function(c) {
-      return String.fromCharCode(c.charCodeAt(0) + 0x60);
-    });
-    if (v !== el.value) { el.value = v; el.setSelectionRange(s, e); }
-  }
-})();
 </script>
 </body>
 </html>
