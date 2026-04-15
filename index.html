@@ -483,10 +483,6 @@ setupTog("c_hosp","ある","c_hosp_sub");
 setupTog("c_meds","ある（手帳忘れ・未記載品）","c_meds_sub");
 setupTog("c_se","ある","c_se_sub");
 
-// c_sk_chk handler は setupMutex の後に設定するため後方へ移動
-document.getElementById("a_preg_chk").onchange=function(){
-  document.getElementById("a_preg_sub").style.display=this.checked?"block":"none";
-};
 // 出産予定日セレクト初期化・妊娠週数計算
 (function(){
   var now=new Date();
@@ -517,6 +513,10 @@ setupMutex("a_food_r","a_food");
 setupMutex("a_dng_r","a_dng");
 setupMutex("a_mf_r","a_mf");
 setupMutex("a_fem_r","a_fem");
+// a_preg_chk handler は setupMutex("a_fem_r","a_fem") の後に設定（上書き防止）
+document.getElementById("a_preg_chk").onchange=function(){
+  document.getElementById("a_preg_sub").style.display=this.checked?"block":"none";
+};
 setupMutex("c_hist_r","c_hist");
 // c_hist_r「ない」選択時にc_sk_subも非表示
 document.querySelector('input[name="c_hist_r"]').onchange=function(){
