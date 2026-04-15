@@ -222,7 +222,16 @@ input[type=radio],input[type=checkbox]{width:18px;height:18px;flex-shrink:0}
 <label><input type="checkbox" id="a_preg_chk" name="a_fem" value="妊娠中"> 妊娠中</label>
 <label><input type="checkbox" name="a_fem" value="授乳中"> 授乳中</label>
 </div>
-<div class="sub" id="a_preg_sub"><input type="text" id="a_preg_wk" placeholder="現在の週数をご記入ください"></div>
+<div class="sub" id="a_preg_sub">
+  <label style="font-size:13px;color:#555;font-weight:normal;margin-bottom:4px;display:block">出産予定日</label>
+  <div style="display:flex;gap:6px;margin-bottom:8px">
+    <select id="due-y" style="flex:2"></select>
+    <select id="due-m" style="flex:1"></select>
+    <select id="due-d" style="flex:1"></select>
+  </div>
+  <div id="preg-weeks" style="background:#e8f5e9;color:#2e7d32;font-size:13px;padding:4px 12px;border-radius:20px;display:inline-block"></div>
+  <input type="hidden" id="a_preg_wk">
+</div>
 <input type="text" id="a_fem_oth" placeholder="その他があればご記入ください">
 </div>
 </div>
@@ -476,6 +485,29 @@ setupTog("c_se","ある","c_se_sub");
 document.getElementById("a_preg_chk").onchange=function(){
   document.getElementById("a_preg_sub").style.display=this.checked?"block":"none";
 };
+// 出産予定日セレクト初期化・妊娠週数計算
+(function(){
+  var now=new Date();
+  var cy=now.getFullYear();
+  var ys=document.getElementById("due-y");
+  var ms=document.getElementById("due-m");
+  var ds=document.getElementById("due-d");
+  for(var y=cy;y<=cy+1;y++){var o=document.createElement("option");o.value=y;o.text=y+"年";ys.appendChild(o);}
+  for(var m=1;m<=12;m++){var o=document.createElement("option");o.value=m;o.text=m+"月";ms.appendChild(o);if(m===now.getMonth()+1)ms.value=m;}
+  for(var d=1;d<=31;d++){var o=document.createElement("option");o.value=d;o.text=d+"日";ds.appendChild(o);}
+  function calcWeeks(){
+    var due=new Date(parseInt(ys.value),parseInt(ms.value)-1,parseInt(ds.value));
+    var today=new Date();today.setHours(0,0,0,0);
+    var diff=Math.floor((due-today)/(1000*60*60*24));
+    var w=Math.floor((280-diff)/7);
+    var wkEl=document.getElementById("preg-weeks");
+    var hidden=document.getElementById("a_preg_wk");
+    if(w<0||w>42){wkEl.textContent="";hidden.value="";}
+    else{wkEl.textContent="現在 "+w+" 週";hidden.value=w+"週";}
+  }
+  ys.onchange=ms.onchange=ds.onchange=calcWeeks;
+  calcWeeks();
+})();
 setupMutex("a_hist_r","a_hist");
 setupMutex("a_con_r","a_con");
 setupMutex("a_alg_r","a_alg");
