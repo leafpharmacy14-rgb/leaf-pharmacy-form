@@ -450,6 +450,8 @@ d.a_history=gc("a_hist_r")||gc("a_hist");d.a_history_other=gv("a_hist_oth");
     d.a_danger=gc("a_dng_r")||gc("a_dng");d.a_danger_other=gv("a_dng_oth");
     d.a_med_form=gc("a_mf_r")||gc("a_mf");d.a_med_form_other=gv("a_mf_oth");
     d.a_female=gc("a_fem_r")||gc("a_fem");d.a_pregnant_weeks=gv("a_preg_wk");d.a_female_other=gv("a_fem_oth");
+    var duey=document.getElementById('due-y').value;var duem=document.getElementById('due-m').value;var dued=document.getElementById('due-d').value;
+    d.a_due_date=(duey&&duem&&dued)?duey+'年'+duem+'月'+dued+'日':'';
   }else{
     d.c_weight=gv("cw");
     d.c_hospital=gc("c_hosp");d.c_hospital_name=gv("c_hosp_nm");
