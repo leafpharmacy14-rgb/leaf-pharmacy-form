@@ -18,7 +18,7 @@ body{font-family:"Hiragino Kaku Gothic ProN","Meiryo",sans-serif;background:#f0f
 .q>label{display:block;font-size:14px;font-weight:bold;margin-bottom:6px}
 .req{color:#e53935;font-size:12px;margin-left:4px}
 .note{background:#fff8e1;border-left:4px solid #ffc107;padding:12px;border-radius:4px;font-size:12px;line-height:1.7;margin-bottom:8px}
-input[type=text],input[type=date],input[type=tel],textarea,select{width:100%;padding:10px;border:1px solid #ccc;border-radius:8px;font-size:14px;margin-top:4px}
+input[type=text],input[type=date],input[type=tel],textarea,select{width:100%;padding:10px;border:1px solid #ccc;border-radius:8px;font-size:16px;margin-top:4px}
 select{background:#fff;appearance:auto}
 textarea{height:72px;resize:vertical}
 .rg,.cg{display:flex;flex-direction:column;gap:8px;margin-top:6px}
@@ -449,9 +449,8 @@ d.a_history=gc("a_hist_r")||gc("a_hist");d.a_history_other=gv("a_hist_oth");
     d.a_driving=gc("a_drv");d.a_driving_other=gv("a_drv_oth");
     d.a_danger=gc("a_dng_r")||gc("a_dng");d.a_danger_other=gv("a_dng_oth");
     d.a_med_form=gc("a_mf_r")||gc("a_mf");d.a_med_form_other=gv("a_mf_oth");
-    d.a_female=gc("a_fem_r")||gc("a_fem");d.a_pregnant_weeks=gv("a_preg_wk");d.a_female_other=gv("a_fem_oth");
-    var duey=document.getElementById('due-y').value;var duem=document.getElementById('due-m').value;var dued=document.getElementById('due-d').value;
-    d.a_due_date=(duey&&duem&&dued)?duey+'年'+duem+'月'+dued+'日':'';
+    d.a_female=gc("a_fem_r")||gc("a_fem");d.a_female_other=gv("a_fem_oth");
+    if(document.getElementById('a_preg_chk').checked){d.a_pregnant_weeks=gv("a_preg_wk");var duey=document.getElementById('due-y').value;var duem=document.getElementById('due-m').value;var dued=document.getElementById('due-d').value;d.a_due_date=(duey&&duem&&dued)?duey+'年'+duem+'月'+dued+'日':'';}else{d.a_pregnant_weeks='';d.a_due_date='';}
   }else{
     d.c_weight=gv("cw");
     d.c_hospital=gc("c_hosp");d.c_hospital_name=gv("c_hosp_nm");
