@@ -348,6 +348,7 @@ input[type=radio],input[type=checkbox]{width:18px;height:18px;flex-shrink:0}
 </div>
 </div>
 
+<div id="ts_box" style="margin:10px 0;display:flex;justify-content:center"></div>
 <button class="sb" id="sb" type="button">送信する</button>
 </div>
 <div id="cm"><h2>✅ 送信完了</h2><p>問診票を受け付けました。<br>右上の×を押して、この画面を閉じてください。</p></div>
@@ -356,6 +357,15 @@ input[type=radio],input[type=checkbox]{width:18px;height:18px;flex-shrink:0}
 var LID="2009439411-BathCPyi";
 var AID="https://script.google.com/macros/s/AKfycbzsuUC2unp_OqKQaUyDWorYp0hOtinzIp5_ChIh1RqQCc4W9_2TovVtJQh2lJ5I-rl6/exec";
 var TK="leaf2024pharmacy";
+// 🔐 Cloudflare Turnstile（偽POST対策・2026-07-02）。サイトキーを入れると有効化。空なら従来どおり動く（安全）。
+var TURNSTILE_SITEKEY="0x4AAAAAADugCtinltVwcFgS";
+if(TURNSTILE_SITEKEY){
+  var tsc=document.createElement('script');
+  tsc.src='https://challenges.cloudflare.com/turnstile/v0/api.js?onload=tsInit';tsc.async=true;tsc.defer=true;
+  document.head.appendChild(tsc);
+}
+var TS_WIDGET=null;
+function tsInit(){ try{ TS_WIDGET=turnstile.render('#ts_box',{sitekey:TURNSTILE_SITEKEY,size:'flexible'}); }catch(e){} }
 
 function gc(n){
   var e=document.querySelectorAll('input[name="'+n+'"]:checked');
@@ -436,6 +446,8 @@ function sv(){
   d.phone_home=gv("ph");d.phone_mobile=gv("pm");
   d.zipcode=gv("zp");d.address=gv("addr");d.address2=gv("addr2");
   d.token=TK;
+  // 🔐 Turnstileトークンを同梱（未設定・未完了でも送信は止めない＝サーバー側のシャドー判定に委ねる）
+  try{ if(TURNSTILE_SITEKEY && typeof turnstile!=='undefined'){ d.cf_token=turnstile.getResponse(TS_WIDGET)||''; } }catch(e){ d.cf_token=''; }
   d.generic=gc("gen");
   if(ag==="15歳以上"){
     d.a_hospital=gc("a_hosp");d.a_hospital_name=gv("a_hosp_nm");
